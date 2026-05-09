@@ -4,8 +4,10 @@ import com.google.firebase.database.FirebaseDatabase
 
 object FirebaseManager {
 
-    val database =
-        FirebaseDatabase.getInstance()
+    private val database =
+        FirebaseDatabase.getInstance(
+            "https://gramakalyana-4575a-default-rtdb.firebaseio.com/"
+        )
 
     val tournamentsRef =
         database.getReference(

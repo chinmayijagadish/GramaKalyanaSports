@@ -73,7 +73,7 @@ fun AddTeamScreen(
 
                     IconButton(
                         onClick = {
-                            navController.navigateUp()
+                            navController.popBackStack()
                         }
                     ) {
 

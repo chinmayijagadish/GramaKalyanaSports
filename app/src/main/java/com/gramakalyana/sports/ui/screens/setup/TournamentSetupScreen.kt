@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.gramakalyana.sports.navigation.Screen
 import java.util.Calendar
+import java.util.UUID
 
 val sportsList = listOf(
     "Cricket",
@@ -315,13 +316,31 @@ fun TournamentSetupScreen(
                             return@Button
                         }
 
+                        val tournamentId =
+                            UUID.randomUUID().toString()
+
                         navController.navigate(
 
-                            Screen.AddTeam.createRoute(
+                            Screen.TournamentDashboard.createRoute(
+
+                                tournamentId,
+
+                                tournamentName,
+
                                 selectedSport,
+
                                 location
                             )
-                        )
+
+                        ) {
+
+                            popUpTo(
+                                Screen.TournamentSetup.route
+                            ) {
+
+                                inclusive = true
+                            }
+                        }
                     },
 
                     modifier = Modifier
