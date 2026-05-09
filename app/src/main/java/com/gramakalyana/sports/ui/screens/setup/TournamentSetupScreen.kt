@@ -1,5 +1,6 @@
 package com.gramakalyana.sports.ui.screens.setup
 
+import android.app.DatePickerDialog
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Spacer
@@ -11,8 +12,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -31,76 +36,274 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.gramakalyana.sports.navigation.Screen
+import java.util.Calendar
+
+val sportsList = listOf(
+    "Cricket",
+    "Kabaddi",
+    "Volleyball"
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TournamentSetupScreen(navController: NavController) {
-    var tournamentName by remember { mutableStateOf("") }
-    var location by remember { mutableStateOf("") }
-    var startDate by remember { mutableStateOf("") }
+
+    var tournamentName by remember {
+        mutableStateOf("")
+    }
+
+    var location by remember {
+        mutableStateOf("")
+    }
+
+    var selectedSport by remember {
+        mutableStateOf("")
+    }
+
+    var expanded by remember {
+        mutableStateOf(false)
+    }
+
+    var selectedDate by remember {
+        mutableStateOf("")
+    }
+
+    val calendar = Calendar.getInstance()
+
+    val datePickerDialog = DatePickerDialog(
+        navController.context,
+
+        { _, year, month, dayOfMonth ->
+
+            selectedDate =
+                "$dayOfMonth/${month + 1}/$year"
+        },
+
+        calendar.get(Calendar.YEAR),
+        calendar.get(Calendar.MONTH),
+        calendar.get(Calendar.DAY_OF_MONTH)
+    )
 
     Scaffold(
+
         topBar = {
+
             TopAppBar(
-                title = { Text("Setup Tournament", fontWeight = FontWeight.Bold) },
+                title = {
+                    Text(
+                        "Setup Tournament",
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
+
+                    IconButton(
+                        onClick = {
+                            navController.popBackStack()
+                        }
+                    ) {
+
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = "Back"
+                        )
                     }
                 },
+
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
+                    containerColor =
+                        MaterialTheme.colorScheme.background
                 )
             )
         }
+
     ) { paddingValues ->
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
                 .padding(paddingValues)
                 .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+
+            verticalArrangement =
+                Arrangement.spacedBy(18.dp)
         ) {
+
             item {
-                Text("General Information", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
-                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = "General Information",
+
+                    style = MaterialTheme.typography.titleLarge,
+
+                    color = MaterialTheme.colorScheme.primary,
+
+                    fontWeight = FontWeight.Bold
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
                 OutlinedTextField(
                     value = tournamentName,
-                    onValueChange = { tournamentName = it },
-                    label = { Text("Tournament Name") },
-                    modifier = Modifier.fillMaxWidth()
+
+                    onValueChange = {
+                        tournamentName = it
+                    },
+
+                    label = {
+                        Text("Tournament Name")
+                    },
+
+                    modifier = Modifier.fillMaxWidth(),
+
+                    shape = RoundedCornerShape(14.dp)
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+
+                Spacer(modifier = Modifier.height(14.dp))
+
                 OutlinedTextField(
                     value = location,
-                    onValueChange = { location = it },
-                    label = { Text("Zone / Village Location") },
-                    modifier = Modifier.fillMaxWidth()
+
+                    onValueChange = {
+                        location = it
+                    },
+
+                    label = {
+                        Text("Zone / Village Location")
+                    },
+
+                    modifier = Modifier.fillMaxWidth(),
+
+                    shape = RoundedCornerShape(14.dp)
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+
+                Spacer(modifier = Modifier.height(14.dp))
+
+                ExposedDropdownMenuBox(
+                    expanded = expanded,
+
+                    onExpandedChange = {
+                        expanded = !expanded
+                    }
+                ) {
+
+                    OutlinedTextField(
+                        value = selectedSport,
+
+                        onValueChange = {},
+
+                        readOnly = true,
+
+                        label = {
+                            Text("Select Sport")
+                        },
+
+                        trailingIcon = {
+
+                            ExposedDropdownMenuDefaults
+                                .TrailingIcon(
+                                    expanded = expanded
+                                )
+                        },
+
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor(),
+
+                        shape = RoundedCornerShape(14.dp)
+                    )
+
+                    ExposedDropdownMenu(
+                        expanded = expanded,
+
+                        onDismissRequest = {
+                            expanded = false
+                        }
+                    ) {
+
+                        sportsList.forEach { sport ->
+
+                            DropdownMenuItem(
+                                text = {
+                                    Text(sport)
+                                },
+
+                                onClick = {
+
+                                    selectedSport = sport
+                                    expanded = false
+                                }
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(14.dp))
+
                 OutlinedTextField(
-                    value = startDate,
-                    onValueChange = { startDate = it },
-                    label = { Text("Start Date") },
-                    modifier = Modifier.fillMaxWidth()
+                    value = selectedDate,
+
+                    onValueChange = {},
+
+                    readOnly = true,
+
+                    label = {
+                        Text("Tournament Date")
+                    },
+
+                    modifier = Modifier.fillMaxWidth(),
+
+                    trailingIcon = {
+
+                        IconButton(
+                            onClick = {
+                                datePickerDialog.show()
+                            }
+                        ) {
+
+                            Icon(
+                                imageVector =
+                                    Icons.Default.DateRange,
+
+                                contentDescription =
+                                    "Pick Date"
+                            )
+                        }
+                    },
+
+                    shape = RoundedCornerShape(14.dp)
                 )
             }
 
             item {
-                Spacer(modifier = Modifier.height(32.dp))
+
+                Spacer(modifier = Modifier.height(28.dp))
+
                 Button(
                     onClick = {
-                        navController.navigate(Screen.Home.route) {
+
+                        navController.navigate(
+                            Screen.Home.route
+                        ) {
+
                             popUpTo(0)
                         }
                     },
+
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(56.dp),
-                    shape = RoundedCornerShape(12.dp)
+                        .height(58.dp),
+
+                    shape = RoundedCornerShape(14.dp)
                 ) {
-                    Text("CREATE TOURNAMENT", fontWeight = FontWeight.Bold)
+
+                    Text(
+                        text = "CREATE TOURNAMENT",
+
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             }
         }
