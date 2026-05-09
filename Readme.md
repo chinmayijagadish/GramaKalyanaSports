@@ -3,7 +3,7 @@
 
 Grama-Kalyana Sports is a modern Android application developed using **Kotlin + Jetpack Compose** to digitalize village-level sports tournaments such as **Cricket, Kabaddi, and Volleyball**.
 
-This project is being developed as part of an internship at **MindMatrix** with the goal of transforming traditional manual scorekeeping into a real-time digital sports experience for local communities.
+This project is being developed with the goal of transforming traditional manual scorekeeping into a real-time digital sports experience for local communities.
 
 ---
 
@@ -331,7 +331,7 @@ Android Developer | AI & Mobile App Enthusiast
 
 # 🤝 Internship
 
-This project is being developed as part of an internship at:
+This project is being developed as part of an internship at: MindMatrix
 
 ### MindMatrix
 
