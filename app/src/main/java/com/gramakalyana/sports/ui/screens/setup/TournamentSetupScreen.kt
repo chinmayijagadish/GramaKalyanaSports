@@ -35,8 +35,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.google.firebase.auth.FirebaseAuth
+import com.gramakalyana.sports.data.model.Tournament
 import com.gramakalyana.sports.navigation.Screen
+import com.gramakalyana.sports.viewmodel.TournamentViewModel
 import java.util.Calendar
 import java.util.UUID
 
@@ -71,6 +75,14 @@ fun TournamentSetupScreen(
     var selectedDate by remember {
         mutableStateOf("")
     }
+
+    val tournamentViewModel:
+            TournamentViewModel = viewModel()
+
+    val currentUserId =
+        FirebaseAuth.getInstance()
+            .currentUser
+            ?.uid ?: ""
 
     val calendar = Calendar.getInstance()
 
@@ -318,6 +330,27 @@ fun TournamentSetupScreen(
 
                         val tournamentId =
                             UUID.randomUUID().toString()
+
+                        val tournament = Tournament(
+
+                            tournamentId = tournamentId,
+
+                            tournamentName = tournamentName,
+
+                            sportType = selectedSport,
+
+                            zone = location,
+
+                            startDate = selectedDate,
+
+                            createdByUserId =
+                                currentUserId
+                        )
+
+                        tournamentViewModel
+                            .createTournament(
+                                tournament
+                            )
 
                         navController.navigate(
 

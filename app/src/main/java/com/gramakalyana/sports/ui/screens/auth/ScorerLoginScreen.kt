@@ -249,7 +249,7 @@ fun ScorerLoginScreen(navController: NavController) {
                                         ).show()
 
                                         navController.navigate(
-                                            Screen.TournamentSetup.route
+                                            Screen.TournamentHome.route
                                         ) {
 
                                             popUpTo(

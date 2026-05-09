@@ -14,6 +14,9 @@ sealed class Screen(val route: String) {
 
     object TournamentSetup : Screen("tournament_setup")
 
+    object TournamentHome :
+        Screen("tournament_home")
+
     object MatchDetails :
         Screen("match_details/{matchId}") {
 
@@ -55,14 +58,17 @@ sealed class Screen(val route: String) {
     }
 
     object AddTeam :
-        Screen("add_team/{sport}/{zone}") {
+        Screen(
+            "add_team/{tournamentId}/{sport}/{zone}"
+        ) {
 
         fun createRoute(
+            tournamentId: String,
             sport: String,
             zone: String
-        ) = "add_team/$sport/$zone"
+        ) =
+            "add_team/$tournamentId/$sport/$zone"
     }
-
     object TournamentDashboard :
         Screen(
             "tournament_dashboard/{tournamentId}/{tournamentName}/{sport}/{zone}"
@@ -81,5 +87,12 @@ sealed class Screen(val route: String) {
         ) =
 
             "tournament_dashboard/$tournamentId/$tournamentName/$sport/$zone"
+    }
+    object TeamPlayers :
+        Screen("team_players/{teamId}") {
+
+        fun createRoute(
+            teamId: String
+        ) = "team_players/$teamId"
     }
 }

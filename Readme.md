@@ -25,58 +25,64 @@ The app is designed to bring a professional sports experience to grassroots tour
 
 ---
 
-# 🚀 Current Development Status
+## 🚀 Current Progress
+
+### ✅ Authentication System
+- Firebase Authentication for scorer/admin login
+- Persistent login session support
+- Automatic login redirection using FirebaseAuth
+- Protected scorer dashboard flow
 
 ---
 
-# 🎯 Current Development Status
+### ✅ Tournament Management
+- Create tournaments with:
+    - Tournament Name
+    - Sport Type
+    - Zone / Village
+    - Tournament Date
+- Persistent tournament storage using Firebase Realtime Database
+- Tournament Home screen displaying previously created tournaments
+- Multi-user tournament isolation (users only see their own tournaments)
 
-## ✅ Completed Features
+---
 
-### 🔐 Authentication
-- Firebase Authentication integrated
-- Scorer-only login system
-- Secure scorer access flow
-- Login validation implemented
+### ✅ Team Management
+- Add multiple teams inside tournaments
+- Teams linked to specific tournaments using tournamentId
+- Realtime Firebase synchronization
+- Tournament-specific team filtering
+- Team dashboard with live updates
 
-### 🎨 UI & Navigation
-- Animated Splash Screen
-- Modern Home Screen
-- Zone Selection Screen
-- Live Matches Screen
-- Match Details Screen
-- Scorer Login Screen
-- Tournament Setup Screen
-- Navigation Architecture completed
-- Dark Mode compatible UI
-- Responsive Compose layouts
+---
 
-### 🏗️ Backend Architecture
-- Firebase Realtime Database connected
-- Clean architecture setup completed
-- Repository pattern implemented
-- ViewModel structure implemented
-- Firebase Manager centralized
+### ✅ Navigation Architecture
+- Dynamic route-based navigation using Jetpack Navigation Compose
+- Tournament Dashboard flow
+- Team management navigation
+- Persistent navigation architecture
 
-### ⚽ Sports Foundation
-- Cricket scoring architecture initialized
-- Kabaddi scoring architecture initialized
-- Volleyball scoring architecture initialized
-- Sport selection flow added
+---
 
-### 📅 Tournament Features
-- Tournament setup flow
-- Sport selection dropdown
-- Calendar date picker
-- Zone-based tournament structure
+### ✅ Firebase Backend Integration
+- Firebase Authentication
+- Firebase Realtime Database
+- Structured collections:
+    - tournaments
+    - teams
+    - players
+    - matches
+- Realtime listeners using StateFlow + ViewModel architecture
 
-### 👥 Team & Player Architecture
-- Team model created
-- Player model created
-- Tournament model created
-- Team repository added
-- Player repository added
-- Tournament repository added
+---
+
+### 🚧 In Progress
+- Player Registration System
+- Match Scheduling
+- Live Match Scoring
+- Public Live Score Viewer
+- Tournament Fixtures & Knockout Logic
+- Points Table & Analytics
 
 ---
 
@@ -124,6 +130,10 @@ app/
 │       │   ├── TeamRepository.kt
 │       │   ├── PlayerRepository.kt
 │       │   └── TournamentRepository.kt 
+│       ├── logic/
+│       │   ├── CricketLogic.kt
+│       │   └── KabbadiLogic.kt
+│       │   └── VolleyballLogic.kt
 │       ├── navigation/
 │       │   ├── AppNavGraph.kt
 │       │   └── Screen.kt
@@ -155,6 +165,7 @@ app/
 │       │   │   │
 │       │   │   ├── setup/
 │       │   │   │   └── TournamentSetupScreen.kt
+│       │   │   │   └── TournamentDashboardScreen.kt
 │       │   │   │   └── AddTeamScreen.kt
 │       │   │   ├── splash/
 │       │   │   │   └── SplashScreen.kt
@@ -162,6 +173,8 @@ app/
 │       │   │   ├── stats/
 │       │   │   │   └── PlayerStatsScreen.kt
 │       │   │   │
+│       │   │   └── tournament/
+│       │   │   │    └── TournamentHomeScreen.kt  
 │       │   │   └── zone/
 │       │   │       └── ZoneSelectionScreen.kt
 │       │   │

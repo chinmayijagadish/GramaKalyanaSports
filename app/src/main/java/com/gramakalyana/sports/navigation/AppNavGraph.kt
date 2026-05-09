@@ -8,6 +8,7 @@ import com.gramakalyana.sports.ui.screens.auth.ScorerLoginScreen
 import com.gramakalyana.sports.ui.screens.home.HomeScreen
 import com.gramakalyana.sports.ui.screens.live.LiveMatchesScreen
 import com.gramakalyana.sports.ui.screens.live.MatchDetailsScreen
+import com.gramakalyana.sports.ui.screens.player.TeamPlayersScreen
 import com.gramakalyana.sports.ui.screens.scoring.CricketScoringScreen
 import com.gramakalyana.sports.ui.screens.scoring.KabaddiScoringScreen
 import com.gramakalyana.sports.ui.screens.scoring.VolleyballScoringScreen
@@ -16,6 +17,7 @@ import com.gramakalyana.sports.ui.screens.setup.TournamentDashboardScreen
 import com.gramakalyana.sports.ui.screens.setup.TournamentSetupScreen
 import com.gramakalyana.sports.ui.screens.splash.SplashScreen
 import com.gramakalyana.sports.ui.screens.stats.PlayerStatsScreen
+import com.gramakalyana.sports.ui.screens.tournament.TournamentHomeScreen
 import com.gramakalyana.sports.ui.screens.zone.ZoneSelectionScreen
 
 @Composable
@@ -67,6 +69,13 @@ fun AppNavGraph(
         composable(Screen.TournamentSetup.route) {
 
             TournamentSetupScreen(
+                navController = navController
+            )
+        }
+
+        composable(Screen.TournamentHome.route) {
+
+            TournamentHomeScreen(
                 navController = navController
             )
         }
@@ -152,6 +161,11 @@ fun AppNavGraph(
 
                 backStackEntry ->
 
+            val tournamentId =
+                backStackEntry.arguments
+                    ?.getString("tournamentId")
+                    ?: ""
+
             val sport =
                 backStackEntry.arguments
                     ?.getString("sport")
@@ -163,7 +177,10 @@ fun AppNavGraph(
                     ?: ""
 
             AddTeamScreen(
+
                 navController = navController,
+
+                tournamentId = tournamentId,
 
                 selectedSport = sport,
 
@@ -208,6 +225,22 @@ fun AppNavGraph(
                 sport = sport,
 
                 zone = zone
+            )
+        }
+
+        composable(
+            Screen.TeamPlayers.route
+        ) {
+
+                backStackEntry ->
+
+            val teamId =
+                backStackEntry.arguments
+                    ?.getString("teamId")
+                    ?: ""
+
+            TeamPlayersScreen(
+                teamId = teamId
             )
         }
     }

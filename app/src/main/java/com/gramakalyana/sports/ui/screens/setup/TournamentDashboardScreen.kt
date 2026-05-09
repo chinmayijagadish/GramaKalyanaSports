@@ -52,8 +52,13 @@ fun TournamentDashboardScreen(
     val teamViewModel: TeamViewModel =
         viewModel()
 
-    val teams by
+    val allTeams by
     teamViewModel.teams.collectAsState()
+
+    val teams =
+        teamViewModel.getTeamsForTournament(
+            tournamentId
+        )
 
     Scaffold(
 
@@ -185,7 +190,11 @@ fun TournamentDashboardScreen(
                                 navController.navigate(
 
                                     Screen.AddTeam.createRoute(
+
+                                        tournamentId,
+
                                         sport,
+
                                         zone
                                     )
                                 )
@@ -274,6 +283,33 @@ fun TournamentDashboardScreen(
                             text =
                                 "Players: ${team.playerCount}"
                         )
+
+                        Spacer(
+                            modifier =
+                                Modifier.height(12.dp)
+                        )
+
+                        Button(
+
+                            onClick = {
+
+                                navController.navigate(
+
+                                    Screen.TeamPlayers.createRoute(
+                                        team.teamId
+                                    )
+                                )
+                            },
+
+                            modifier = Modifier.fillMaxWidth(),
+
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+
+                            Text(
+                                text = "MANAGE PLAYERS"
+                            )
+                        }
                     }
                 }
             }

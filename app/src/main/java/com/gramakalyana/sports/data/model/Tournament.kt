@@ -10,5 +10,7 @@ data class Tournament(
 
     val zone: String = "",
 
-    val startDate: String = ""
+    val startDate: String = "",
+
+    val createdByUserId: String = ""
 )

@@ -69,4 +69,14 @@ class TeamViewModel : ViewModel() {
                 }
             )
     }
+
+    fun getTeamsForTournament(
+        tournamentId: String
+    ): List<Team> {
+
+        return _teams.value.filter {
+
+            it.tournamentId == tournamentId
+        }
+    }
 }

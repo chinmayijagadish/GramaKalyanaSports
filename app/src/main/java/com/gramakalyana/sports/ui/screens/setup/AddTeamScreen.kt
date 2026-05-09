@@ -42,6 +42,8 @@ fun AddTeamScreen(
 
     navController: NavController,
 
+    tournamentId: String,
+
     selectedSport: String,
 
     selectedZone: String
@@ -126,17 +128,11 @@ fun AddTeamScreen(
                 Spacer(modifier = Modifier.height(10.dp))
 
                 Text(
-                    text = "Sport: $selectedSport",
-
-                    style =
-                        MaterialTheme.typography.bodyLarge
+                    text = "Sport: $selectedSport"
                 )
 
                 Text(
-                    text = "Zone: $selectedZone",
-
-                    style =
-                        MaterialTheme.typography.bodyLarge
+                    text = "Zone: $selectedZone"
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -183,6 +179,9 @@ fun AddTeamScreen(
 
                             teamId =
                                 UUID.randomUUID().toString(),
+
+                            tournamentId =
+                                tournamentId,
 
                             teamName = teamName,
 

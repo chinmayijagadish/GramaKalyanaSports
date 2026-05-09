@@ -4,6 +4,8 @@ data class Team(
 
     val teamId: String = "",
 
+    val tournamentId: String = "",
+
     val teamName: String = "",
 
     val sportType: String = "",

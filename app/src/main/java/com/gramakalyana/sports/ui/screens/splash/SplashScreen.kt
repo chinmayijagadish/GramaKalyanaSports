@@ -29,64 +29,154 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.google.firebase.auth.FirebaseAuth
 import com.gramakalyana.sports.navigation.Screen
 import com.gramakalyana.sports.ui.components.GradientBackground
 import kotlinx.coroutines.delay
 
 @Composable
 fun SplashScreen(navController: NavController) {
-    var startAnimation by remember { mutableStateOf(false) }
+
+    var startAnimation by remember {
+        mutableStateOf(false)
+    }
 
     val alphaAnim by animateFloatAsState(
-        targetValue = if (startAnimation) 1f else 0f,
-        animationSpec = tween(durationMillis = 1500, easing = FastOutSlowInEasing),
+        targetValue =
+            if (startAnimation) 1f else 0f,
+
+        animationSpec = tween(
+            durationMillis = 1500,
+
+            easing = FastOutSlowInEasing
+        ),
+
         label = "AlphaAnimation"
     )
+
     val scaleAnim by animateFloatAsState(
-        targetValue = if (startAnimation) 1f else 0.5f,
-        animationSpec = tween(durationMillis = 1500, easing = FastOutSlowInEasing),
+        targetValue =
+            if (startAnimation) 1f else 0.5f,
+
+        animationSpec = tween(
+            durationMillis = 1500,
+
+            easing = FastOutSlowInEasing
+        ),
+
         label = "ScaleAnimation"
     )
 
     LaunchedEffect(key1 = true) {
+
         startAnimation = true
+
         delay(2500)
-        navController.navigate(Screen.Home.route) {
-            popUpTo(Screen.Splash.route) { inclusive = true }
+
+        val currentUser =
+            FirebaseAuth.getInstance()
+                .currentUser
+
+        if (currentUser != null) {
+
+            navController.navigate(
+                Screen.TournamentHome.route
+            ) {
+
+                popUpTo(
+                    Screen.Splash.route
+                ) {
+                    inclusive = true
+                }
+            }
+
+        } else {
+
+            navController.navigate(
+                Screen.Home.route
+            ) {
+
+                popUpTo(
+                    Screen.Splash.route
+                ) {
+                    inclusive = true
+                }
+            }
         }
     }
 
     GradientBackground {
+
         Box(
             modifier = Modifier.fillMaxSize(),
+
             contentAlignment = Alignment.Center
         ) {
+
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.alpha(alphaAnim).scale(scaleAnim)
+                horizontalAlignment =
+                    Alignment.CenterHorizontally,
+
+                modifier = Modifier
+                    .alpha(alphaAnim)
+                    .scale(scaleAnim)
             ) {
-                Box(contentAlignment = Alignment.Center) {
+
+                Box(
+                    contentAlignment =
+                        Alignment.Center
+                ) {
+
                     Icon(
-                        imageVector = Icons.Default.Star,
-                        contentDescription = "App Logo",
-                        modifier = Modifier.size(100.dp),
+                        imageVector =
+                            Icons.Default.Star,
+
+                        contentDescription =
+                            "App Logo",
+
+                        modifier =
+                            Modifier.size(100.dp),
+
                         tint = Color.White
                     )
                 }
-                Spacer(modifier = Modifier.height(24.dp))
-                Text(
-                    text = "Grama-Kalyana Sports",
-                    style = MaterialTheme.typography.displayMedium.copy(
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
+
+                Spacer(
+                    modifier =
+                        Modifier.height(24.dp)
                 )
+
                 Text(
-                    text = "Digital Village Sports",
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        color = Color.White.copy(alpha = 0.8f)
-                    ),
-                    modifier = Modifier.padding(top = 8.dp)
+                    text =
+                        "Grama-Kalyana Sports",
+
+                    style =
+                        MaterialTheme.typography
+                            .displayMedium.copy(
+
+                                fontWeight =
+                                    FontWeight.Bold,
+
+                                color = Color.White
+                            )
+                )
+
+                Text(
+                    text =
+                        "Digital Village Sports",
+
+                    style =
+                        MaterialTheme.typography
+                            .titleMedium.copy(
+
+                                color =
+                                    Color.White.copy(
+                                        alpha = 0.8f
+                                    )
+                            ),
+
+                    modifier =
+                        Modifier.padding(top = 8.dp)
                 )
             }
         }
