@@ -7,8 +7,15 @@ object FirebaseManager {
     val database =
         FirebaseDatabase.getInstance()
 
+    val tournamentsRef =
+        database.getReference(
+            "grama_kalyana_sports/tournaments"
+        )
+
     val matchesRef =
-        database.getReference("grama_kalyana_sports/matches")
+        database.getReference(
+            "grama_kalyana_sports/matches"
+        )
 
     val teamsRef =
         database.getReference(

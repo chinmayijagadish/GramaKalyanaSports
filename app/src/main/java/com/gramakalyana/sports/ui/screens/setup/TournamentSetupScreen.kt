@@ -1,6 +1,7 @@
 package com.gramakalyana.sports.ui.screens.setup
 
 import android.app.DatePickerDialog
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Spacer
@@ -46,7 +47,9 @@ val sportsList = listOf(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TournamentSetupScreen(navController: NavController) {
+fun TournamentSetupScreen(
+    navController: NavController
+) {
 
     var tournamentName by remember {
         mutableStateOf("")
@@ -90,8 +93,10 @@ fun TournamentSetupScreen(navController: NavController) {
 
             TopAppBar(
                 title = {
+
                     Text(
-                        "Setup Tournament",
+                        text = "Setup Tournament",
+
                         fontWeight = FontWeight.Bold
                     )
                 },
@@ -105,7 +110,9 @@ fun TournamentSetupScreen(navController: NavController) {
                     ) {
 
                         Icon(
-                            imageVector = Icons.Default.ArrowBack,
+                            imageVector =
+                                Icons.Default.ArrowBack,
+
                             contentDescription = "Back"
                         )
                     }
@@ -123,7 +130,9 @@ fun TournamentSetupScreen(navController: NavController) {
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
+                .background(
+                    MaterialTheme.colorScheme.background
+                )
                 .padding(paddingValues)
                 .padding(16.dp),
 
@@ -136,9 +145,11 @@ fun TournamentSetupScreen(navController: NavController) {
                 Text(
                     text = "General Information",
 
-                    style = MaterialTheme.typography.titleLarge,
+                    style =
+                        MaterialTheme.typography.titleLarge,
 
-                    color = MaterialTheme.colorScheme.primary,
+                    color =
+                        MaterialTheme.colorScheme.primary,
 
                     fontWeight = FontWeight.Bold
                 )
@@ -233,6 +244,7 @@ fun TournamentSetupScreen(navController: NavController) {
                                 onClick = {
 
                                     selectedSport = sport
+
                                     expanded = false
                                 }
                             )
@@ -282,14 +294,34 @@ fun TournamentSetupScreen(navController: NavController) {
                 Spacer(modifier = Modifier.height(28.dp))
 
                 Button(
+
                     onClick = {
 
-                        navController.navigate(
-                            Screen.Home.route
+                        if (
+                            tournamentName.isBlank() ||
+                            location.isBlank() ||
+                            selectedSport.isBlank() ||
+                            selectedDate.isBlank()
                         ) {
 
-                            popUpTo(0)
+                            Toast.makeText(
+                                navController.context,
+
+                                "Please fill all fields",
+
+                                Toast.LENGTH_SHORT
+                            ).show()
+
+                            return@Button
                         }
+
+                        navController.navigate(
+
+                            Screen.AddTeam.createRoute(
+                                selectedSport,
+                                location
+                            )
+                        )
                     },
 
                     modifier = Modifier
@@ -300,7 +332,7 @@ fun TournamentSetupScreen(navController: NavController) {
                 ) {
 
                     Text(
-                        text = "CREATE TOURNAMENT",
+                        text = "CONTINUE TO TEAM SETUP",
 
                         fontWeight = FontWeight.Bold
                     )

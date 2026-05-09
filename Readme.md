@@ -27,34 +27,59 @@ The app is designed to bring a professional sports experience to grassroots tour
 
 # 🚀 Current Development Status
 
-### ✅ Completed
-- Android Studio project setup
-- Jetpack Compose integration
-- Navigation architecture
-- Modular screen structure
-- Theme setup
-- UI component structure
-- GitHub integration
+---
 
-### 🔄 In Progress
-- Firebase integration
-- Real-time live scoring
-- Authentication system
-- Sports logic implementation
-- Responsive UI improvements
-- Dark/Light mode optimization
+# 🎯 Current Development Status
 
-### 📌 Planned Features
-- Cricket scoring engine
-- Kabaddi raid logic
-- Volleyball set logic
-- Player career statistics
-- Match history
-- Share scorecard
-- Offline sync
-- Tournament analytics
+## ✅ Completed Features
+
+### 🔐 Authentication
+- Firebase Authentication integrated
+- Scorer-only login system
+- Secure scorer access flow
+- Login validation implemented
+
+### 🎨 UI & Navigation
+- Animated Splash Screen
+- Modern Home Screen
+- Zone Selection Screen
+- Live Matches Screen
+- Match Details Screen
+- Scorer Login Screen
+- Tournament Setup Screen
+- Navigation Architecture completed
+- Dark Mode compatible UI
+- Responsive Compose layouts
+
+### 🏗️ Backend Architecture
+- Firebase Realtime Database connected
+- Clean architecture setup completed
+- Repository pattern implemented
+- ViewModel structure implemented
+- Firebase Manager centralized
+
+### ⚽ Sports Foundation
+- Cricket scoring architecture initialized
+- Kabaddi scoring architecture initialized
+- Volleyball scoring architecture initialized
+- Sport selection flow added
+
+### 📅 Tournament Features
+- Tournament setup flow
+- Sport selection dropdown
+- Calendar date picker
+- Zone-based tournament structure
+
+### 👥 Team & Player Architecture
+- Team model created
+- Player model created
+- Tournament model created
+- Team repository added
+- Player repository added
+- Tournament repository added
 
 ---
+
 
 # 🛠️ Tech Stack
 
@@ -84,7 +109,21 @@ app/
 │
 ├── kotlin+java/
 │   └── com.gramakalyana.sports/
-│
+│       ├── data
+│       ├── firebase
+│       │   └── FirebaseManager.kt
+│       │
+│       ├── model
+│       │   ├── Match.kt
+│       │   ├── Team.kt
+│       │   ├── Player.kt
+│       │   └── Tournament.kt
+│       │
+│       └── repository
+│       │   ├── MatchRepository.kt
+│       │   ├── TeamRepository.kt
+│       │   ├── PlayerRepository.kt
+│       │   └── TournamentRepository.kt 
 │       ├── navigation/
 │       │   ├── AppNavGraph.kt
 │       │   └── Screen.kt
@@ -116,7 +155,7 @@ app/
 │       │   │   │
 │       │   │   ├── setup/
 │       │   │   │   └── TournamentSetupScreen.kt
-│       │   │   │
+│       │   │   │   └── AddTeamScreen.kt
 │       │   │   ├── splash/
 │       │   │   │   └── SplashScreen.kt
 │       │   │   │
@@ -131,6 +170,11 @@ app/
 │       │       ├── Theme.kt
 │       │       └── Type.kt
 │       │
+│       ├── viewmodel
+│       │    ├── MatchViewModel.kt
+│       │    ├── TeamViewModel.kt
+│       │    ├── PlayerViewModel.kt
+│       │    └── TournamentViewModel.kt
 │       └── MainActivity.kt
 │
 ├── com.gramakalyana.sports (androidTest)
@@ -139,6 +183,7 @@ app/
 ```
 
 ---
+
 
 # 📌 Planned Upcoming Structure
 
