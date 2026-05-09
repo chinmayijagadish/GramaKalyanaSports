@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "407764499670",
+    "firebase_url": "https://gramakalyana-4575a-default-rtdb.firebaseio.com",
+    "project_id": "gramakalyana-4575a",
+    "storage_bucket": "gramakalyana-4575a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:407764499670:android:d0f04be375268966401d77",
+        "android_client_info": {
+          "package_name": "com.example.gramakalyanascoreboard"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKbZtUBpX4EceSTJMmBpVVHZtzkKV4tlw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:407764499670:android:891b65fb400b08c5401d77",
+        "android_client_info": {
+          "package_name": "com.gramakalyana.sports"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKbZtUBpX4EceSTJMmBpVVHZtzkKV4tlw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
