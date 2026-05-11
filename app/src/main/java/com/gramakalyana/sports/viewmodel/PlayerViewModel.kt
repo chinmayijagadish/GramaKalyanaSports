@@ -32,6 +32,16 @@ class PlayerViewModel : ViewModel() {
             .setValue(player)
     }
 
+    fun deletePlayer(
+        playerId: String
+    ) {
+
+        FirebaseManager
+            .playersRef
+            .child(playerId)
+            .removeValue()
+    }
+
     private fun fetchPlayers() {
 
         FirebaseManager
@@ -71,15 +81,5 @@ class PlayerViewModel : ViewModel() {
                     }
                 }
             )
-    }
-
-    fun getPlayersForTeam(
-        teamId: String
-    ): List<Player> {
-
-        return _players.value.filter {
-
-            it.teamId == teamId
-        }
     }
 }

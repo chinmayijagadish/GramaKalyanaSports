@@ -17,6 +17,11 @@ class TeamViewModel : ViewModel() {
     val teams: StateFlow<List<Team>>
         get() = _teams
 
+    init {
+
+        fetchTeams()
+    }
+
     fun createTeam(team: Team) {
 
         FirebaseManager
@@ -25,9 +30,28 @@ class TeamViewModel : ViewModel() {
             .setValue(team)
     }
 
-    init {
+    fun deleteTeam(
+        teamId: String
+    ) {
 
-        fetchTeams()
+        FirebaseManager
+            .teamsRef
+            .child(teamId)
+            .removeValue()
+    }
+
+    fun updatePlayerCount(
+
+        teamId: String,
+
+        count: Int
+    ) {
+
+        FirebaseManager
+            .teamsRef
+            .child(teamId)
+            .child("playerCount")
+            .setValue(count)
     }
 
     private fun fetchTeams() {
@@ -58,7 +82,8 @@ class TeamViewModel : ViewModel() {
                             }
                         }
 
-                        _teams.value = teamList
+                        _teams.value =
+                            teamList
                     }
 
                     override fun onCancelled(
@@ -68,15 +93,5 @@ class TeamViewModel : ViewModel() {
                     }
                 }
             )
-    }
-
-    fun getTeamsForTournament(
-        tournamentId: String
-    ): List<Team> {
-
-        return _teams.value.filter {
-
-            it.tournamentId == tournamentId
-        }
     }
 }

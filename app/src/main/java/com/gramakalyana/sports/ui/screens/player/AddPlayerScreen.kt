@@ -2,7 +2,6 @@ package com.gramakalyana.sports.ui.screens.player
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,7 +32,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.gramakalyana.sports.data.model.Player
+import com.gramakalyana.sports.navigation.Screen
 import com.gramakalyana.sports.viewmodel.PlayerViewModel
+import com.gramakalyana.sports.viewmodel.TeamViewModel
 import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -66,6 +68,12 @@ fun AddPlayerScreen(
 
     val playerViewModel:
             PlayerViewModel = viewModel()
+
+    val teamViewModel:
+            TeamViewModel = viewModel()
+
+    val allPlayers by
+    playerViewModel.players.collectAsState()
 
     val roles = when (sportType) {
 
@@ -288,6 +296,20 @@ fun AddPlayerScreen(
                         playerViewModel
                             .createPlayer(player)
 
+                        val currentPlayers =
+
+                            allPlayers.filter {
+
+                                it.teamId == teamId
+                            }
+
+                        teamViewModel.updatePlayerCount(
+
+                            teamId,
+
+                            currentPlayers.size + 1
+                        )
+
                         Toast.makeText(
                             navController.context,
 
@@ -296,7 +318,24 @@ fun AddPlayerScreen(
                             Toast.LENGTH_SHORT
                         ).show()
 
-                        navController.popBackStack()
+                        navController.navigate(
+
+                            Screen.TeamPlayers.createRoute(
+
+                                teamId,
+
+                                tournamentId,
+
+                                sportType
+                            )
+                        ) {
+
+                            popUpTo(
+                                Screen.AddPlayer.route
+                            ) {
+                                inclusive = true
+                            }
+                        }
                     },
 
                     modifier =

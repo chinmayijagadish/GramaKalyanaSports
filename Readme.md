@@ -27,64 +27,22 @@ The app is designed to bring a professional sports experience to grassroots tour
 
 ## 🚀 Current Progress
 
-### ✅ Authentication System
-- Firebase Authentication for scorer/admin login
-- Persistent login session support
-- Automatic login redirection using FirebaseAuth
-- Protected scorer dashboard flow
+Current Progress: ~85% Complete
 
----
+Completed:
+- Authentication
+- Tournament CRUD
+- Team CRUD
+- Player CRUD
+- Realtime Firebase Integration
+- Reactive Compose UI
 
-### ✅ Tournament Management
-- Create tournaments with:
-    - Tournament Name
-    - Sport Type
-    - Zone / Village
-    - Tournament Date
-- Persistent tournament storage using Firebase Realtime Database
-- Tournament Home screen displaying previously created tournaments
-- Multi-user tournament isolation (users only see their own tournaments)
-
----
-
-### ✅ Team Management
-- Add multiple teams inside tournaments
-- Teams linked to specific tournaments using tournamentId
-- Realtime Firebase synchronization
-- Tournament-specific team filtering
-- Team dashboard with live updates
-
----
-
-### ✅ Navigation Architecture
-- Dynamic route-based navigation using Jetpack Navigation Compose
-- Tournament Dashboard flow
-- Team management navigation
-- Persistent navigation architecture
-
----
-
-### ✅ Firebase Backend Integration
-- Firebase Authentication
-- Firebase Realtime Database
-- Structured collections:
-    - tournaments
-    - teams
-    - players
-    - matches
-- Realtime listeners using StateFlow + ViewModel architecture
-
----
-
-### 🚧 In Progress
-- Player Registration System
+Upcoming Features:
 - Match Scheduling
-- Live Match Scoring
-- Public Live Score Viewer
-- Tournament Fixtures & Knockout Logic
-- Points Table & Analytics
-
----
+- Live Score Update System
+- Public Live Viewer
+- Knockout Fixtures
+- Tournament Statistics
 
 
 # 🛠️ Tech Stack

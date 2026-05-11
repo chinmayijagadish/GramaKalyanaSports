@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -18,19 +19,25 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.gramakalyana.sports.data.model.Team
 import com.gramakalyana.sports.navigation.Screen
 import com.gramakalyana.sports.viewmodel.TeamViewModel
 
@@ -61,6 +68,22 @@ fun TournamentDashboardScreen(
             it.tournamentId == tournamentId
         }
 
+    var showDeleteDialog by remember {
+        mutableStateOf(false)
+    }
+
+    var showEditDialog by remember {
+        mutableStateOf(false)
+    }
+
+    var selectedTeam by remember {
+        mutableStateOf<Team?>(null)
+    }
+
+    var editedTeamName by remember {
+        mutableStateOf("")
+    }
+
     Scaffold(
 
         topBar = {
@@ -85,6 +108,132 @@ fun TournamentDashboardScreen(
         }
 
     ) { paddingValues ->
+
+        if (showDeleteDialog && selectedTeam != null) {
+
+            AlertDialog(
+
+                onDismissRequest = {
+
+                    showDeleteDialog = false
+                },
+
+                title = {
+
+                    Text("Delete Team")
+                },
+
+                text = {
+
+                    Text(
+                        "Are you sure you want to delete this team?"
+                    )
+                },
+
+                confirmButton = {
+
+                    TextButton(
+
+                        onClick = {
+
+                            teamViewModel.deleteTeam(
+                                selectedTeam!!.teamId
+                            )
+
+                            showDeleteDialog = false
+                        }
+                    ) {
+
+                        Text("Delete")
+                    }
+                },
+
+                dismissButton = {
+
+                    TextButton(
+
+                        onClick = {
+
+                            showDeleteDialog = false
+                        }
+                    ) {
+
+                        Text("Cancel")
+                    }
+                }
+            )
+        }
+
+        if (showEditDialog && selectedTeam != null) {
+
+            AlertDialog(
+
+                onDismissRequest = {
+
+                    showEditDialog = false
+                },
+
+                title = {
+
+                    Text("Edit Team")
+                },
+
+                text = {
+
+                    OutlinedTextField(
+                        value = editedTeamName,
+
+                        onValueChange = {
+                            editedTeamName = it
+                        },
+
+                        label = {
+                            Text("Team Name")
+                        }
+                    )
+                },
+
+                confirmButton = {
+
+                    TextButton(
+
+                        onClick = {
+
+                            val updatedTeam =
+
+                                selectedTeam!!.copy(
+
+                                    teamName =
+                                        editedTeamName
+                                )
+
+                            teamViewModel.createTeam(
+                                updatedTeam
+                            )
+
+                            showEditDialog = false
+                        }
+                    ) {
+
+                        Text("Save")
+                    }
+                },
+
+                dismissButton = {
+
+                    TextButton(
+
+                        onClick = {
+
+                            showEditDialog = false
+                        }
+                    ) {
+
+                        Text("Cancel")
+                    }
+                }
+            )
+        }
 
         LazyColumn(
             modifier = Modifier
@@ -134,103 +283,38 @@ fun TournamentDashboardScreen(
                         Text(
                             text = "Zone: $zone"
                         )
-
-                        Spacer(modifier = Modifier.height(10.dp))
-
-                        Text(
-                            text = "Tournament ID:",
-
-                            fontWeight = FontWeight.Bold
-                        )
-
-                        Text(
-                            text = tournamentId,
-
-                            style =
-                                MaterialTheme.typography.bodySmall
-                        )
                     }
                 }
             }
 
             item {
 
-                Card(
+                Button(
+
+                    onClick = {
+
+                        navController.navigate(
+
+                            Screen.AddTeam.createRoute(
+
+                                tournamentId,
+
+                                sport,
+
+                                zone
+                            )
+                        )
+                    },
+
                     modifier = Modifier.fillMaxWidth(),
 
-                    shape = RoundedCornerShape(20.dp),
-
-                    colors = CardDefaults.cardColors(
-                        containerColor =
-                            MaterialTheme.colorScheme.secondaryContainer
-                    )
+                    shape = RoundedCornerShape(14.dp)
                 ) {
 
-                    Column(
-                        modifier = Modifier.padding(20.dp),
-
-                        horizontalAlignment =
-                            Alignment.CenterHorizontally
-                    ) {
-
-                        Text(
-                            text = "Manage Teams",
-
-                            style =
-                                MaterialTheme.typography.titleLarge,
-
-                            fontWeight = FontWeight.Bold
-                        )
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        Button(
-
-                            onClick = {
-
-                                navController.navigate(
-
-                                    Screen.AddTeam.createRoute(
-
-                                        tournamentId,
-
-                                        sport,
-
-                                        zone
-                                    )
-                                )
-                            },
-
-                            modifier = Modifier.fillMaxWidth(),
-
-                            shape = RoundedCornerShape(14.dp),
-
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor =
-                                    MaterialTheme.colorScheme.primary
-                            )
-                        ) {
-
-                            Text(
-                                text = "ADD TEAM",
-
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                    }
+                    Text(
+                        text = "ADD TEAM"
+                    )
                 }
-            }
-
-            item {
-
-                Text(
-                    text = "Added Teams",
-
-                    style =
-                        MaterialTheme.typography.titleLarge,
-
-                    fontWeight = FontWeight.Bold
-                )
             }
 
             if (allTeams.isEmpty()) {
@@ -283,16 +367,6 @@ fun TournamentDashboardScreen(
 
                         Text(
                             text =
-                                "Sport: ${team.sportType}"
-                        )
-
-                        Text(
-                            text =
-                                "Zone: ${team.zone}"
-                        )
-
-                        Text(
-                            text =
                                 "Players: ${team.playerCount}"
                         )
 
@@ -318,13 +392,70 @@ fun TournamentDashboardScreen(
                                 )
                             },
 
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier =
+                                Modifier.fillMaxWidth(),
 
-                            shape = RoundedCornerShape(12.dp)
+                            shape =
+                                RoundedCornerShape(12.dp)
                         ) {
 
                             Text(
                                 text = "MANAGE PLAYERS"
+                            )
+                        }
+
+                        Spacer(
+                            modifier =
+                                Modifier.height(10.dp)
+                        )
+
+                        Button(
+
+                            onClick = {
+
+                                selectedTeam = team
+
+                                editedTeamName =
+                                    team.teamName
+
+                                showEditDialog = true
+                            },
+
+                            modifier =
+                                Modifier.fillMaxWidth(),
+
+                            shape =
+                                RoundedCornerShape(12.dp)
+                        ) {
+
+                            Text(
+                                text = "EDIT TEAM"
+                            )
+                        }
+
+                        Spacer(
+                            modifier =
+                                Modifier.height(10.dp)
+                        )
+
+                        Button(
+
+                            onClick = {
+
+                                selectedTeam = team
+
+                                showDeleteDialog = true
+                            },
+
+                            modifier =
+                                Modifier.fillMaxWidth(),
+
+                            shape =
+                                RoundedCornerShape(12.dp)
+                        ) {
+
+                            Text(
+                                text = "DELETE TEAM"
                             )
                         }
                     }
@@ -334,25 +465,6 @@ fun TournamentDashboardScreen(
             item {
 
                 HorizontalDivider()
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                Text(
-                    text = "Upcoming Features",
-
-                    style =
-                        MaterialTheme.typography.titleMedium,
-
-                    fontWeight = FontWeight.Bold
-                )
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                Text("• Player Registration")
-                Text("• Match Scheduling")
-                Text("• Live Scoring")
-                Text("• Knockout Fixtures")
-                Text("• Public Live Viewer")
             }
         }
     }

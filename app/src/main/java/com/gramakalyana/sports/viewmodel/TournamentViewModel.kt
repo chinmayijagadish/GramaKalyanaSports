@@ -1,7 +1,6 @@
 package com.gramakalyana.sports.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -18,11 +17,6 @@ class TournamentViewModel : ViewModel() {
     val tournaments: StateFlow<List<Tournament>>
         get() = _tournaments
 
-    private val currentUserId =
-        FirebaseAuth.getInstance()
-            .currentUser
-            ?.uid ?: ""
-
     init {
 
         fetchTournaments()
@@ -36,6 +30,16 @@ class TournamentViewModel : ViewModel() {
             .tournamentsRef
             .child(tournament.tournamentId)
             .setValue(tournament)
+    }
+
+    fun deleteTournament(
+        tournamentId: String
+    ) {
+
+        FirebaseManager
+            .tournamentsRef
+            .child(tournamentId)
+            .removeValue()
     }
 
     private fun fetchTournaments() {
@@ -60,11 +64,7 @@ class TournamentViewModel : ViewModel() {
                                     Tournament::class.java
                                 )
 
-                            if (
-                                tournament != null &&
-                                tournament.createdByUserId
-                                == currentUserId
-                            ) {
+                            if (tournament != null) {
 
                                 tournamentList.add(
                                     tournament
