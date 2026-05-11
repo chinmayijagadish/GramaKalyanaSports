@@ -29,7 +29,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.google.firebase.auth.FirebaseAuth
 import com.gramakalyana.sports.navigation.Screen
 import com.gramakalyana.sports.ui.components.GradientBackground
 import kotlinx.coroutines.delay
@@ -73,34 +72,14 @@ fun SplashScreen(navController: NavController) {
 
         delay(2500)
 
-        val currentUser =
-            FirebaseAuth.getInstance()
-                .currentUser
+        navController.navigate(
+            Screen.Home.route
+        ) {
 
-        if (currentUser != null) {
-
-            navController.navigate(
-                Screen.TournamentHome.route
+            popUpTo(
+                Screen.Splash.route
             ) {
-
-                popUpTo(
-                    Screen.Splash.route
-                ) {
-                    inclusive = true
-                }
-            }
-
-        } else {
-
-            navController.navigate(
-                Screen.Home.route
-            ) {
-
-                popUpTo(
-                    Screen.Splash.route
-                ) {
-                    inclusive = true
-                }
+                inclusive = true
             }
         }
     }
@@ -122,24 +101,18 @@ fun SplashScreen(navController: NavController) {
                     .scale(scaleAnim)
             ) {
 
-                Box(
-                    contentAlignment =
-                        Alignment.Center
-                ) {
+                Icon(
+                    imageVector =
+                        Icons.Default.Star,
 
-                    Icon(
-                        imageVector =
-                            Icons.Default.Star,
+                    contentDescription =
+                        "App Logo",
 
-                        contentDescription =
-                            "App Logo",
+                    modifier =
+                        Modifier.size(100.dp),
 
-                        modifier =
-                            Modifier.size(100.dp),
-
-                        tint = Color.White
-                    )
-                }
+                    tint = Color.White
+                )
 
                 Spacer(
                     modifier =

@@ -19,7 +19,7 @@ import com.gramakalyana.sports.ui.screens.splash.SplashScreen
 import com.gramakalyana.sports.ui.screens.stats.PlayerStatsScreen
 import com.gramakalyana.sports.ui.screens.tournament.TournamentHomeScreen
 import com.gramakalyana.sports.ui.screens.zone.ZoneSelectionScreen
-
+import com.gramakalyana.sports.ui.screens.player.AddPlayerScreen
 @Composable
 fun AppNavGraph(
     navController: NavHostController
@@ -239,8 +239,57 @@ fun AppNavGraph(
                     ?.getString("teamId")
                     ?: ""
 
+            val tournamentId =
+                backStackEntry.arguments
+                    ?.getString("tournamentId")
+                    ?: ""
+
+            val sport =
+                backStackEntry.arguments
+                    ?.getString("sport")
+                    ?: ""
+
             TeamPlayersScreen(
-                teamId = teamId
+
+                navController = navController,
+
+                teamId = teamId,
+
+                tournamentId = tournamentId,
+
+                sportType = sport
+            )
+        }
+        composable(
+            Screen.AddPlayer.route
+        ) {
+
+                backStackEntry ->
+
+            val teamId =
+                backStackEntry.arguments
+                    ?.getString("teamId")
+                    ?: ""
+
+            val tournamentId =
+                backStackEntry.arguments
+                    ?.getString("tournamentId")
+                    ?: ""
+
+            val sport =
+                backStackEntry.arguments
+                    ?.getString("sport")
+                    ?: ""
+
+            AddPlayerScreen(
+
+                navController = navController,
+
+                teamId = teamId,
+
+                tournamentId = tournamentId,
+
+                sportType = sport
             )
         }
     }

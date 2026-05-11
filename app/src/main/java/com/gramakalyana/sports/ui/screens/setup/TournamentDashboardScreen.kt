@@ -56,9 +56,10 @@ fun TournamentDashboardScreen(
     teamViewModel.teams.collectAsState()
 
     val teams =
-        teamViewModel.getTeamsForTournament(
-            tournamentId
-        )
+        allTeams.filter {
+
+            it.tournamentId == tournamentId
+        }
 
     Scaffold(
 
@@ -232,7 +233,18 @@ fun TournamentDashboardScreen(
                 )
             }
 
-            if (teams.isEmpty()) {
+            if (allTeams.isEmpty()) {
+
+                item {
+
+                    Text(
+                        text =
+                            "Loading teams..."
+                    )
+                }
+            }
+
+            else if (teams.isEmpty()) {
 
                 item {
 
@@ -296,7 +308,12 @@ fun TournamentDashboardScreen(
                                 navController.navigate(
 
                                     Screen.TeamPlayers.createRoute(
-                                        team.teamId
+
+                                        team.teamId,
+
+                                        tournamentId,
+
+                                        sport
                                     )
                                 )
                             },

@@ -121,7 +121,7 @@ fun TournamentHomeScreen(
 
                     Text(
                         text =
-                            "No tournaments created yet."
+                            "Loading tournaments..."
                     )
                 }
             }

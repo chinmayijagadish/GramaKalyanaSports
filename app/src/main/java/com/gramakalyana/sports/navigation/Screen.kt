@@ -89,10 +89,27 @@ sealed class Screen(val route: String) {
             "tournament_dashboard/$tournamentId/$tournamentName/$sport/$zone"
     }
     object TeamPlayers :
-        Screen("team_players/{teamId}") {
+        Screen(
+            "team_players/{teamId}/{tournamentId}/{sport}"
+        ) {
 
         fun createRoute(
-            teamId: String
-        ) = "team_players/$teamId"
+            teamId: String,
+            tournamentId: String,
+            sport: String
+        ) =
+            "team_players/$teamId/$tournamentId/$sport"
+    }
+    object AddPlayer :
+        Screen(
+            "add_player/{teamId}/{tournamentId}/{sport}"
+        ) {
+
+        fun createRoute(
+            teamId: String,
+            tournamentId: String,
+            sport: String
+        ) =
+            "add_player/$teamId/$tournamentId/$sport"
     }
 }

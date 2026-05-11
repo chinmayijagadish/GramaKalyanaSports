@@ -12,5 +12,7 @@ data class Player(
 
     val teamId: String = "",
 
+    val tournamentId: String = "",
+
     val sportType: String = ""
 )
