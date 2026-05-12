@@ -31,7 +31,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -39,6 +38,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.gramakalyana.sports.data.model.Team
 import com.gramakalyana.sports.navigation.Screen
+import com.gramakalyana.sports.viewmodel.MatchViewModel
 import com.gramakalyana.sports.viewmodel.TeamViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,11 +59,23 @@ fun TournamentDashboardScreen(
     val teamViewModel: TeamViewModel =
         viewModel()
 
+    val matchViewModel: MatchViewModel =
+        viewModel()
+
     val allTeams by
     teamViewModel.teams.collectAsState()
 
+    val allMatches by
+    matchViewModel.matches.collectAsState()
+
     val teams =
         allTeams.filter {
+
+            it.tournamentId == tournamentId
+        }
+
+    val matches =
+        allMatches.filter {
 
             it.tournamentId == tournamentId
         }
@@ -315,6 +327,154 @@ fun TournamentDashboardScreen(
                         text = "ADD TEAM"
                     )
                 }
+            }
+
+            item {
+
+                Button(
+
+                    onClick = {
+
+                        navController.navigate(
+
+                            Screen.CreateMatch.createRoute(
+
+                                tournamentId,
+
+                                sport
+                            )
+                        )
+                    },
+
+                    modifier = Modifier.fillMaxWidth(),
+
+                    shape = RoundedCornerShape(14.dp),
+
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor =
+                            MaterialTheme.colorScheme.primary
+                    )
+                ) {
+
+                    Text(
+                        text = "CREATE MATCH"
+                    )
+                }
+            }
+
+            item {
+
+                Text(
+                    text = "Scheduled Matches",
+
+                    style =
+                        MaterialTheme.typography.titleLarge,
+
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            if (matches.isEmpty()) {
+
+                item {
+
+                    Text(
+                        text =
+                            "No matches scheduled yet."
+                    )
+                }
+            }
+
+            items(matches) { match ->
+
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+
+                    shape = RoundedCornerShape(18.dp)
+                ) {
+
+                    Column(
+                        modifier = Modifier.padding(18.dp)
+                    ) {
+
+                        Text(
+                            text =
+                                "${match.teamAName} vs ${match.teamBName}",
+
+                            style =
+                                MaterialTheme.typography.titleMedium,
+
+                            fontWeight = FontWeight.Bold
+                        )
+
+                        Spacer(
+                            modifier =
+                                Modifier.height(8.dp)
+                        )
+
+                        Text(
+                            text =
+                                "Date: ${match.matchDate}"
+                        )
+
+                        Text(
+                            text =
+                                "Time: ${match.matchTime}"
+                        )
+
+                        Text(
+                            text =
+                                "Venue: ${match.venue}"
+                        )
+
+                        Text(
+                            text =
+                                "Status: ${match.status}"
+                        )
+
+                        Spacer(
+                            modifier =
+                                Modifier.height(12.dp)
+                        )
+
+                        Button(
+
+                            onClick = {
+
+                                navController.navigate(
+
+                                    Screen.LiveScore.createRoute(
+
+                                        match.matchId
+                                    )
+                                )
+                            },
+
+                            modifier =
+                                Modifier.fillMaxWidth(),
+
+                            shape =
+                                RoundedCornerShape(12.dp)
+                        ) {
+
+                            Text(
+                                text = "START LIVE SCORE"
+                            )
+                        }
+                    }
+                }
+            }
+
+            item {
+
+                Text(
+                    text = "Added Teams",
+
+                    style =
+                        MaterialTheme.typography.titleLarge,
+
+                    fontWeight = FontWeight.Bold
+                )
             }
 
             if (allTeams.isEmpty()) {

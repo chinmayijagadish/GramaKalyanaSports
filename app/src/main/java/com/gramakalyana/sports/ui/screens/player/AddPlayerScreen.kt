@@ -32,7 +32,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.gramakalyana.sports.data.model.Player
-import com.gramakalyana.sports.navigation.Screen
 import com.gramakalyana.sports.viewmodel.PlayerViewModel
 import com.gramakalyana.sports.viewmodel.TeamViewModel
 import java.util.UUID
@@ -318,24 +317,7 @@ fun AddPlayerScreen(
                             Toast.LENGTH_SHORT
                         ).show()
 
-                        navController.navigate(
-
-                            Screen.TeamPlayers.createRoute(
-
-                                teamId,
-
-                                tournamentId,
-
-                                sportType
-                            )
-                        ) {
-
-                            popUpTo(
-                                Screen.AddPlayer.route
-                            ) {
-                                inclusive = true
-                            }
-                        }
+                        navController.popBackStack()
                     },
 
                     modifier =

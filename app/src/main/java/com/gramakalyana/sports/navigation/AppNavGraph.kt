@@ -8,6 +8,8 @@ import com.gramakalyana.sports.ui.screens.auth.ScorerLoginScreen
 import com.gramakalyana.sports.ui.screens.home.HomeScreen
 import com.gramakalyana.sports.ui.screens.live.LiveMatchesScreen
 import com.gramakalyana.sports.ui.screens.live.MatchDetailsScreen
+import com.gramakalyana.sports.ui.screens.match.CreateMatchScreen
+import com.gramakalyana.sports.ui.screens.match.LiveScoreScreen
 import com.gramakalyana.sports.ui.screens.player.TeamPlayersScreen
 import com.gramakalyana.sports.ui.screens.scoring.CricketScoringScreen
 import com.gramakalyana.sports.ui.screens.scoring.KabaddiScoringScreen
@@ -20,6 +22,7 @@ import com.gramakalyana.sports.ui.screens.stats.PlayerStatsScreen
 import com.gramakalyana.sports.ui.screens.tournament.TournamentHomeScreen
 import com.gramakalyana.sports.ui.screens.zone.ZoneSelectionScreen
 import com.gramakalyana.sports.ui.screens.player.AddPlayerScreen
+
 @Composable
 fun AppNavGraph(
     navController: NavHostController
@@ -260,6 +263,7 @@ fun AppNavGraph(
                 sportType = sport
             )
         }
+
         composable(
             Screen.AddPlayer.route
         ) {
@@ -290,6 +294,51 @@ fun AppNavGraph(
                 tournamentId = tournamentId,
 
                 sportType = sport
+            )
+        }
+
+        composable(
+            Screen.CreateMatch.route
+        ) {
+
+                backStackEntry ->
+
+            val tournamentId =
+                backStackEntry.arguments
+                    ?.getString("tournamentId")
+                    ?: ""
+
+            val sportType =
+                backStackEntry.arguments
+                    ?.getString("sportType")
+                    ?: ""
+
+            CreateMatchScreen(
+
+                navController = navController,
+
+                tournamentId = tournamentId,
+
+                sportType = sportType
+            )
+        }
+
+        composable(
+            Screen.LiveScore.route
+        ) {
+
+                backStackEntry ->
+
+            val matchId =
+                backStackEntry.arguments
+                    ?.getString("matchId")
+                    ?: ""
+
+            LiveScoreScreen(
+
+                navController = navController,
+
+                matchId = matchId
             )
         }
     }
