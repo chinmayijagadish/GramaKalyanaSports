@@ -4,14 +4,22 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -21,29 +29,53 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.gramakalyana.sports.ui.components.GlassmorphismCard
+import com.gramakalyana.sports.viewmodel.CricketLiveViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MatchDetailsScreen(
+
     navController: NavController,
+
     matchId: String
 ) {
+
+    val cricketViewModel:
+            CricketLiveViewModel =
+        viewModel()
+
+    LaunchedEffect(Unit) {
+
+        cricketViewModel.observeLiveMatch(
+            matchId
+        )
+    }
+
+    val liveData by
+    cricketViewModel.liveMatch.collectAsState()
 
     Scaffold(
 
         topBar = {
 
             TopAppBar(
+
                 title = {
+
                     Text(
-                        text = "Match Details",
+                        text = "Live Match",
+
                         fontWeight = FontWeight.Bold
                     )
                 },
@@ -52,223 +84,564 @@ fun MatchDetailsScreen(
 
                     IconButton(
                         onClick = {
+
                             navController.popBackStack()
                         }
                     ) {
 
                         Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Back"
+                            imageVector =
+                                Icons.Default.ArrowBack,
+
+                            contentDescription =
+                                "Back"
                         )
                     }
                 },
 
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
-                )
+                colors =
+                    TopAppBarDefaults.topAppBarColors(
+
+                        containerColor =
+                            MaterialTheme.colorScheme.background
+                    )
             )
         }
 
     ) { paddingValues ->
 
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
+                .background(
+                    MaterialTheme.colorScheme.background
+                )
                 .padding(paddingValues)
                 .padding(16.dp),
 
-            verticalArrangement = Arrangement.spacedBy(22.dp)
+            verticalArrangement =
+                Arrangement.spacedBy(18.dp)
         ) {
 
-            GlassmorphismCard(
-                modifier = Modifier.fillMaxWidth()
-            ) {
+            item {
 
-                Column(
-                    modifier = Modifier.padding(22.dp),
-                    verticalArrangement = Arrangement.spacedBy(18.dp)
+                // LIVE STATUS
+
+                Row(
+                    verticalAlignment =
+                        Alignment.CenterVertically
                 ) {
 
-                    Text(
-                        text = "Cricket - Final",
+                    Box(
+                        modifier = Modifier
+                            .size(10.dp)
+                            .background(
 
-                        color = MaterialTheme.colorScheme.primary,
+                                if (
+                                    liveData.matchCompleted
+                                )
+                                    Color.Gray
+                                else
+                                    Color.Red,
 
-                        style = MaterialTheme.typography.labelLarge
+                                CircleShape
+                            )
                     )
 
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
+                    Spacer(
+                        modifier =
+                            Modifier.width(8.dp)
+                    )
 
-                        horizontalArrangement =
-                            Arrangement.spacedBy(20.dp),
+                    Text(
 
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
+                        text =
 
-                        Column(
-                            modifier = Modifier.weight(1f),
-
-                            horizontalAlignment =
-                                Alignment.CenterHorizontally,
-
-                            verticalArrangement =
-                                Arrangement.spacedBy(6.dp)
-                        ) {
-
-                            Text(
-                                text = "Riders FC",
-
-                                fontWeight = FontWeight.Bold,
-
-                                style = MaterialTheme.typography.titleLarge
+                            if (
+                                liveData.matchCompleted
                             )
+                                "MATCH COMPLETED"
+                            else
+                                "LIVE",
 
-                            Text(
-                                text = "143/5",
+                        fontWeight =
+                            FontWeight.Bold,
 
-                                color = MaterialTheme.colorScheme.primary,
+                        color =
 
-                                style = MaterialTheme.typography.headlineSmall,
-
-                                fontWeight = FontWeight.ExtraBold
+                            if (
+                                liveData.matchCompleted
                             )
+                                Color.Gray
+                            else
+                                Color.Red
+                    )
+                }
+            }
 
-                            Text(
-                                text = "(18.1)",
+            item {
 
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                        }
+                // SCORE CARD
 
-                        Text(
-                            text = "vs",
-
-                            color = MaterialTheme.colorScheme.outline
-                        )
-
-                        Column(
-                            modifier = Modifier.weight(1f),
-
-                            horizontalAlignment =
-                                Alignment.CenterHorizontally,
-
-                            verticalArrangement =
-                                Arrangement.spacedBy(6.dp)
-                        ) {
-
-                            Text(
-                                text = "Vikings",
-
-                                fontWeight = FontWeight.Bold,
-
-                                style = MaterialTheme.typography.titleLarge
-                            )
-
-                            Text(
-                                text = "-",
-
-                                color = MaterialTheme.colorScheme.secondary,
-
-                                style = MaterialTheme.typography.headlineSmall,
-
-                                fontWeight = FontWeight.ExtraBold
-                            )
-
-                            Text(
-                                text = "Yet to bat",
-
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                        }
-                    }
+                GlassmorphismCard(
+                    modifier =
+                        Modifier.fillMaxWidth()
+                ) {
 
                     Column(
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                        modifier =
+                            Modifier.padding(20.dp),
+
+                        verticalArrangement =
+                            Arrangement.spacedBy(14.dp)
                     ) {
 
                         Text(
-                            text = "Current Run Rate",
 
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            text =
+                                liveData.battingTeamName,
+
+                            style =
+                                MaterialTheme.typography.titleLarge,
+
+                            fontWeight =
+                                FontWeight.ExtraBold
                         )
 
                         Text(
-                            text = "CRR: 7.85",
 
-                            fontWeight = FontWeight.Bold,
+                            text =
+                                "${liveData.runs}/${liveData.wickets}",
 
-                            style = MaterialTheme.typography.titleMedium
+                            style =
+                                MaterialTheme.typography.displayLarge,
+
+                            fontWeight =
+                                FontWeight.ExtraBold
                         )
+
+                        Row(
+                            horizontalArrangement =
+                                Arrangement.spacedBy(18.dp)
+                        ) {
+
+                            Text(
+                                text =
+                                    "${liveData.overs}/${liveData.maxOvers} Overs"
+                            )
+
+                            Text(
+                                text =
+                                    "CRR ${
+                                        String.format(
+                                            "%.2f",
+                                            liveData.currentRunRate
+                                        )
+                                    }"
+                            )
+                        }
+
+                        if (liveData.secondInnings) {
+
+                            val rrr =
+                                if (
+                                    liveData.requiredRunRate < 0
+                                )
+                                    0.0
+                                else
+                                    liveData.requiredRunRate
+
+                            Row(
+                                horizontalArrangement =
+                                    Arrangement.spacedBy(18.dp)
+                            ) {
+
+                                Text(
+                                    text =
+                                        "Target ${liveData.target}"
+                                )
+
+                                Text(
+                                    text =
+                                        "RRR ${
+                                            String.format(
+                                                "%.2f",
+                                                rrr
+                                            )
+                                        }"
+                                )
+                            }
+                        }
+
+                        // BATTERS
+
+                        Card(
+                            shape =
+                                RoundedCornerShape(14.dp),
+
+                            colors =
+                                CardDefaults.cardColors(
+
+                                    containerColor =
+                                        MaterialTheme.colorScheme.surface.copy(
+                                            alpha = 0.3f
+                                        )
+                                )
+                        ) {
+
+                            Column(
+                                modifier =
+                                    Modifier.padding(14.dp),
+
+                                verticalArrangement =
+                                    Arrangement.spacedBy(10.dp)
+                            ) {
+
+                                Text(
+
+                                    text =
+                                        "Batters",
+
+                                    fontWeight =
+                                        FontWeight.Bold
+                                )
+
+                                Row(
+                                    modifier =
+                                        Modifier.fillMaxWidth(),
+
+                                    horizontalArrangement =
+                                        Arrangement.SpaceBetween
+                                ) {
+
+                                    Text(
+
+                                        text =
+                                            "★ ${liveData.strikerName}",
+
+                                        fontWeight =
+                                            FontWeight.Bold
+                                    )
+
+                                    Text(
+                                        text =
+                                            "${liveData.strikerRuns} (${liveData.strikerBalls})"
+                                    )
+                                }
+
+                                Row(
+                                    modifier =
+                                        Modifier.fillMaxWidth(),
+
+                                    horizontalArrangement =
+                                        Arrangement.SpaceBetween
+                                ) {
+
+                                    Text(
+                                        text =
+                                            liveData.nonStrikerName
+                                    )
+
+                                    Text(
+                                        text =
+                                            "${liveData.nonStrikerRuns} (${liveData.nonStrikerBalls})"
+                                    )
+                                }
+                            }
+                        }
+
+                        // BOWLER
+
+                        Card(
+                            shape =
+                                RoundedCornerShape(14.dp),
+
+                            colors =
+                                CardDefaults.cardColors(
+
+                                    containerColor =
+                                        MaterialTheme.colorScheme.surface.copy(
+                                            alpha = 0.3f
+                                        )
+                                )
+                        ) {
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(14.dp),
+
+                                horizontalArrangement =
+                                    Arrangement.SpaceBetween
+                            ) {
+
+                                Text(
+                                    text =
+                                        liveData.bowlerName
+                                )
+
+                                Text(
+
+                                    text =
+                                        "${liveData.bowlerWickets}W • ${liveData.bowlerRuns}R",
+
+                                    fontWeight =
+                                        FontWeight.Bold
+                                )
+                            }
+                        }
+
+                        // STATS
+
+                        Row(
+                            modifier =
+                                Modifier.fillMaxWidth(),
+
+                            horizontalArrangement =
+                                Arrangement.SpaceBetween
+                        ) {
+
+                            MiniStatCard(
+                                title = "4s",
+                                value =
+                                    liveData.fours.toString()
+                            )
+
+                            MiniStatCard(
+                                title = "6s",
+                                value =
+                                    liveData.sixes.toString()
+                            )
+
+                            MiniStatCard(
+                                title = "Extras",
+                                value =
+                                    liveData.extras.toString()
+                            )
+                        }
                     }
                 }
             }
 
-            Column(
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
+            item {
 
-                Text(
-                    text = "Recent Deliveries",
+                // THIS OVER
 
-                    style = MaterialTheme.typography.titleMedium,
-
-                    fontWeight = FontWeight.Bold
-                )
-
-                Text(
-                    text = "Last Over",
-
-                    style = MaterialTheme.typography.bodyMedium,
-
-                    color = MaterialTheme.colorScheme.onSurface.copy(
-                        alpha = 0.7f
-                    )
-                )
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-
-                    horizontalArrangement =
-                        Arrangement.spacedBy(10.dp)
+                GlassmorphismCard(
+                    modifier =
+                        Modifier.fillMaxWidth()
                 ) {
 
-                    listOf("1", "4", "W", "0", "2", "6")
-                        .forEach { run ->
+                    Column(
+                        modifier =
+                            Modifier.padding(18.dp),
 
-                            BallIndicator(text = run)
+                        verticalArrangement =
+                            Arrangement.spacedBy(14.dp)
+                    ) {
+
+                        Text(
+
+                            text =
+                                "This Over",
+
+                            style =
+                                MaterialTheme.typography.titleMedium,
+
+                            fontWeight =
+                                FontWeight.Bold
+                        )
+
+                        if (
+                            liveData.thisOver.isEmpty()
+                        ) {
+
+                            Text("-")
                         }
+
+                        else {
+
+                            FlowRow(
+
+                                horizontalArrangement =
+                                    Arrangement.spacedBy(10.dp),
+
+                                verticalArrangement =
+                                    Arrangement.spacedBy(10.dp)
+                            ) {
+
+                                liveData.thisOver
+                                    .forEach { ball ->
+
+                                        BallIndicator(
+                                            text = ball
+                                        )
+                                    }
+                            }
+                        }
+                    }
                 }
+            }
+
+            if (
+                liveData.matchCompleted
+            ) {
+
+                item {
+
+                    // RESULT CARD
+
+                    Card(
+                        modifier =
+                            Modifier.fillMaxWidth(),
+
+                        shape =
+                            RoundedCornerShape(18.dp),
+
+                        colors =
+                            CardDefaults.cardColors(
+
+                                containerColor =
+                                    Color(0xFF1B5E20)
+                            )
+                    ) {
+
+                        Column(
+                            modifier =
+                                Modifier.padding(20.dp),
+
+                            horizontalAlignment =
+                                Alignment.CenterHorizontally
+                        ) {
+
+                            Text(
+
+                                text =
+                                    "MATCH RESULT",
+
+                                color =
+                                    Color.White,
+
+                                fontWeight =
+                                    FontWeight.Bold
+                            )
+
+                            Spacer(
+                                modifier =
+                                    Modifier.height(10.dp)
+                            )
+
+                            Text(
+
+                                text =
+                                    liveData.resultText,
+
+                                color =
+                                    Color.White,
+
+                                style =
+                                    MaterialTheme.typography.titleLarge,
+
+                                fontWeight =
+                                    FontWeight.ExtraBold
+                            )
+                        }
+                    }
+                }
+            }
+
+            item {
+
+                Spacer(
+                    modifier =
+                        Modifier.height(100.dp)
+                )
             }
         }
     }
 }
 
 @Composable
-fun BallIndicator(text: String) {
+fun MiniStatCard(
+    title: String,
+    value: String
+) {
+
+    Card(
+        shape =
+            RoundedCornerShape(12.dp),
+
+        colors =
+            CardDefaults.cardColors(
+
+                containerColor =
+                    MaterialTheme.colorScheme.surface.copy(
+                        alpha = 0.3f
+                    )
+            )
+    ) {
+
+        Column(
+            modifier =
+                Modifier.padding(
+                    horizontal = 18.dp,
+                    vertical = 12.dp
+                ),
+
+            horizontalAlignment =
+                Alignment.CenterHorizontally
+        ) {
+
+            Text(
+                text = title
+            )
+
+            Text(
+
+                text = value,
+
+                fontWeight =
+                    FontWeight.Bold
+            )
+        }
+    }
+}
+
+@Composable
+fun BallIndicator(
+    text: String
+) {
 
     val backgroundColor =
+
         when (text) {
 
-            "W" -> MaterialTheme.colorScheme.error
+            "W" ->
+                MaterialTheme.colorScheme.error
 
             "4", "6" ->
                 MaterialTheme.colorScheme.primary
+
+            "WD", "NB" ->
+                Color(0xFFFF9800)
 
             else ->
                 MaterialTheme.colorScheme.surfaceVariant
         }
 
-    val contentColor =
+    val textColor =
+
         if (
             text == "W" ||
             text == "4" ||
-            text == "6"
+            text == "6" ||
+            text == "WD" ||
+            text == "NB"
         )
             Color.White
+
         else
-            MaterialTheme.colorScheme.onSurfaceVariant
+            MaterialTheme.colorScheme.onSurface
 
     Box(
         modifier = Modifier
@@ -278,15 +651,18 @@ fun BallIndicator(text: String) {
                 CircleShape
             ),
 
-        contentAlignment = Alignment.Center
+        contentAlignment =
+            Alignment.Center
     ) {
 
         Text(
+
             text = text,
 
-            color = contentColor,
+            color = textColor,
 
-            fontWeight = FontWeight.Bold
+            fontWeight =
+                FontWeight.Bold
         )
     }
 }

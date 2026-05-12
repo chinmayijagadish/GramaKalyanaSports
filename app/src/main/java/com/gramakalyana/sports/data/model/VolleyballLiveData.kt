@@ -22,5 +22,9 @@ data class VolleyballLiveData(
 
     val matchPoint: Boolean = false,
 
-    val matchStatus: String = "LIVE"
+    val setResults: List<String> = emptyList(),
+
+    val matchStatus: String = "LIVE",
+
+    val winner: String = ""
 )

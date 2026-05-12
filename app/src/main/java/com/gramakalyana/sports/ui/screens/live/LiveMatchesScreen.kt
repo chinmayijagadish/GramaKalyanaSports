@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,6 +26,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -36,6 +38,7 @@ import com.gramakalyana.sports.navigation.Screen
 import com.gramakalyana.sports.ui.components.GlassmorphismCard
 import com.gramakalyana.sports.ui.components.LiveBadge
 import com.gramakalyana.sports.utils.SelectedZone
+import com.gramakalyana.sports.viewmodel.CricketLiveViewModel
 import com.gramakalyana.sports.viewmodel.MatchViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -45,24 +48,35 @@ fun LiveMatchesScreen(
 ) {
 
     val matchViewModel:
-            MatchViewModel = viewModel()
+            MatchViewModel =
+        viewModel()
+
+    val cricketViewModel:
+            CricketLiveViewModel =
+        viewModel()
 
     val allMatches by
     matchViewModel.matches.collectAsState()
+
+    val liveData by
+    cricketViewModel.liveMatch.collectAsState()
 
     val selectedZone =
         SelectedZone.selectedZone
 
     val zoneMatches =
-        allMatches.filter {
+        remember(allMatches) {
 
-            it.zone
-                .trim()
-                .lowercase() ==
+            allMatches.filter {
 
-                    selectedZone
-                        .trim()
-                        .lowercase()
+                it.zone
+                    .trim()
+                    .lowercase() ==
+
+                        selectedZone
+                            .trim()
+                            .lowercase()
+            }
         }
 
     val liveMatches =
@@ -136,8 +150,6 @@ fun LiveMatchesScreen(
 
     ) { paddingValues ->
 
-        // LOADING STATE
-
         if (allMatches.isEmpty()) {
 
             Box(
@@ -155,8 +167,6 @@ fun LiveMatchesScreen(
                 )
             }
         }
-
-        // NO MATCHES
 
         else if (zoneMatches.isEmpty()) {
 
@@ -176,8 +186,6 @@ fun LiveMatchesScreen(
             }
         }
 
-        // MATCHES AVAILABLE
-
         else {
 
             LazyColumn(
@@ -194,7 +202,7 @@ fun LiveMatchesScreen(
                     Arrangement.spacedBy(22.dp)
             ) {
 
-                // LIVE MATCHES
+                // LIVE
 
                 item {
 
@@ -218,6 +226,34 @@ fun LiveMatchesScreen(
 
                             match = match,
 
+                            liveScore =
+
+                                if (
+                                    liveData.matchId ==
+                                    match.matchId
+                                ) {
+
+                                    "${liveData.runs}/${liveData.wickets} (${liveData.overs})"
+
+                                } else {
+
+                                    ""
+                                },
+
+                            resultText =
+
+                                if (
+                                    liveData.matchId ==
+                                    match.matchId
+                                ) {
+
+                                    liveData.resultText
+
+                                } else {
+
+                                    ""
+                                },
+
                             onClick = {
 
                                 navController.navigate(
@@ -232,7 +268,7 @@ fun LiveMatchesScreen(
                     }
                 }
 
-                // UPCOMING MATCHES
+                // UPCOMING
 
                 item {
 
@@ -256,6 +292,10 @@ fun LiveMatchesScreen(
 
                             match = match,
 
+                            liveScore = "",
+
+                            resultText = "",
+
                             onClick = {
 
                                 navController.navigate(
@@ -270,7 +310,7 @@ fun LiveMatchesScreen(
                     }
                 }
 
-                // COMPLETED MATCHES
+                // COMPLETED
 
                 item {
 
@@ -293,6 +333,10 @@ fun LiveMatchesScreen(
                         RealtimeMatchCard(
 
                             match = match,
+
+                            liveScore = "",
+
+                            resultText = "",
 
                             onClick = {
 
@@ -359,6 +403,10 @@ fun RealtimeMatchCard(
 
     match: Match,
 
+    liveScore: String,
+
+    resultText: String,
+
     onClick: () -> Unit
 ) {
 
@@ -379,7 +427,7 @@ fun RealtimeMatchCard(
                 Arrangement.spacedBy(12.dp)
         ) {
 
-            androidx.compose.foundation.layout.Row(
+            Row(
                 verticalAlignment =
                     Alignment.CenterVertically
             ) {
@@ -422,6 +470,34 @@ fun RealtimeMatchCard(
                 fontWeight =
                     FontWeight.Bold
             )
+
+            if (liveScore.isNotBlank()) {
+
+                Text(
+
+                    text = liveScore,
+
+                    style =
+                        MaterialTheme.typography.headlineSmall,
+
+                    fontWeight =
+                        FontWeight.ExtraBold
+                )
+            }
+
+            if (resultText.isNotBlank()) {
+
+                Text(
+
+                    text = resultText,
+
+                    color =
+                        MaterialTheme.colorScheme.primary,
+
+                    fontWeight =
+                        FontWeight.Bold
+                )
+            }
 
             Text(
                 text =

@@ -28,9 +28,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.gramakalyana.sports.data.model.CricketLiveData
+import com.gramakalyana.sports.data.model.KabaddiLiveData
 import com.gramakalyana.sports.data.model.Match
+import com.gramakalyana.sports.data.model.VolleyballLiveData
+import com.gramakalyana.sports.viewmodel.CricketLiveViewModel
+import com.gramakalyana.sports.viewmodel.KabaddiLiveViewModel
 import com.gramakalyana.sports.viewmodel.MatchViewModel
 import com.gramakalyana.sports.viewmodel.TeamViewModel
+import com.gramakalyana.sports.viewmodel.VolleyballLiveViewModel
 import java.util.Calendar
 import java.util.UUID
 
@@ -56,6 +62,15 @@ fun CreateMatchScreen(
 
     val matchViewModel:
             MatchViewModel = viewModel()
+
+    val cricketLiveViewModel:
+            CricketLiveViewModel = viewModel()
+
+    val kabaddiLiveViewModel:
+            KabaddiLiveViewModel = viewModel()
+
+    val volleyballLiveViewModel:
+            VolleyballLiveViewModel = viewModel()
 
     val allTeams by
     teamViewModel.teams.collectAsState()
@@ -187,8 +202,11 @@ fun CreateMatchScreen(
 
                     OutlinedTextField(
                         value = selectedTeamAName,
+
                         onValueChange = {},
+
                         readOnly = true,
+
                         label = {
                             Text("Select Team A")
                         },
@@ -251,8 +269,11 @@ fun CreateMatchScreen(
 
                     OutlinedTextField(
                         value = selectedTeamBName,
+
                         onValueChange = {},
+
                         readOnly = true,
+
                         label = {
                             Text("Select Team B")
                         },
@@ -464,6 +485,75 @@ fun CreateMatchScreen(
                         matchViewModel.createMatch(
                             match
                         )
+
+                        if (sportType == "Cricket") {
+
+                            val cricketLiveData =
+
+                                CricketLiveData(
+
+                                    matchId =
+                                        match.matchId,
+
+                                    battingTeamId =
+                                        selectedTeamAId,
+
+                                    bowlingTeamId =
+                                        selectedTeamBId,
+
+                                    battingTeamName =
+                                        selectedTeamAName,
+
+                                    bowlingTeamName =
+                                        selectedTeamBName,
+
+                                    strikerName =
+                                        "Batsman 1",
+
+                                    nonStrikerName =
+                                        "Batsman 2",
+
+                                    bowlerName =
+                                        "Bowler 1"
+                                )
+
+                            cricketLiveViewModel
+                                .createLiveMatch(
+                                    cricketLiveData
+                                )
+                        }
+
+                        else if (sportType == "Kabaddi") {
+
+                            val kabaddiLiveData =
+
+                                KabaddiLiveData(
+
+                                    matchId =
+                                        match.matchId
+                                )
+
+                            kabaddiLiveViewModel
+                                .createLiveMatch(
+                                    kabaddiLiveData
+                                )
+                        }
+
+                        else if (sportType == "Volleyball") {
+
+                            val volleyballLiveData =
+
+                                VolleyballLiveData(
+
+                                    matchId =
+                                        match.matchId
+                                )
+
+                            volleyballLiveViewModel
+                                .createLiveMatch(
+                                    volleyballLiveData
+                                )
+                        }
 
                         Toast.makeText(
 

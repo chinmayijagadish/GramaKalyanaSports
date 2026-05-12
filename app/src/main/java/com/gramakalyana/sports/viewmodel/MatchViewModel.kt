@@ -50,6 +50,55 @@ class MatchViewModel : ViewModel() {
             .matchesRef
             .child(matchId)
             .removeValue()
+
+        FirebaseManager
+            .cricketLiveRef
+            .child(matchId)
+            .removeValue()
+
+        FirebaseManager
+            .kabaddiLiveRef
+            .child(matchId)
+            .removeValue()
+
+        FirebaseManager
+            .volleyballLiveRef
+            .child(matchId)
+            .removeValue()
+    }
+
+    fun updateMatchStatus(
+
+        matchId: String,
+
+        status: String
+    ) {
+
+        FirebaseManager
+            .matchesRef
+            .child(matchId)
+            .child("status")
+            .setValue(status)
+    }
+
+    fun finishMatch(
+
+        matchId: String,
+
+        winner: String
+    ) {
+
+        FirebaseManager
+            .matchesRef
+            .child(matchId)
+            .child("status")
+            .setValue("COMPLETED")
+
+        FirebaseManager
+            .matchesRef
+            .child(matchId)
+            .child("winner")
+            .setValue(winner)
     }
 
     private fun fetchMatches() {

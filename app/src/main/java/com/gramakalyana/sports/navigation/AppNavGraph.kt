@@ -9,7 +9,6 @@ import com.gramakalyana.sports.ui.screens.home.HomeScreen
 import com.gramakalyana.sports.ui.screens.live.LiveMatchesScreen
 import com.gramakalyana.sports.ui.screens.live.MatchDetailsScreen
 import com.gramakalyana.sports.ui.screens.match.CreateMatchScreen
-import com.gramakalyana.sports.ui.screens.match.LiveScoreScreen
 import com.gramakalyana.sports.ui.screens.player.AddPlayerScreen
 import com.gramakalyana.sports.ui.screens.player.TeamPlayersScreen
 import com.gramakalyana.sports.ui.screens.scoring.CricketScoringScreen
@@ -93,13 +92,18 @@ fun AppNavGraph(
                     ?: ""
 
             MatchDetailsScreen(
+
                 navController = navController,
 
                 matchId = matchId
             )
         }
 
-        composable(Screen.LiveScoringCricket.route) {
+        // CRICKET SCORING
+
+        composable(
+            Screen.LiveScoringCricket.route
+        ) {
 
                 backStackEntry ->
 
@@ -108,13 +112,18 @@ fun AppNavGraph(
                     ?.getString("matchId")
 
             CricketScoringScreen(
+
                 navController = navController,
 
                 matchId = matchId
             )
         }
 
-        composable(Screen.LiveScoringKabaddi.route) {
+        // KABADDI SCORING
+
+        composable(
+            Screen.LiveScoringKabaddi.route
+        ) {
 
                 backStackEntry ->
 
@@ -123,13 +132,18 @@ fun AppNavGraph(
                     ?.getString("matchId")
 
             KabaddiScoringScreen(
+
                 navController = navController,
 
                 matchId = matchId
             )
         }
 
-        composable(Screen.LiveScoringVolleyball.route) {
+        // VOLLEYBALL SCORING
+
+        composable(
+            Screen.LiveScoringVolleyball.route
+        ) {
 
                 backStackEntry ->
 
@@ -138,6 +152,7 @@ fun AppNavGraph(
                     ?.getString("matchId")
 
             VolleyballScoringScreen(
+
                 navController = navController,
 
                 matchId = matchId
@@ -154,13 +169,16 @@ fun AppNavGraph(
                     ?: ""
 
             PlayerStatsScreen(
+
                 navController = navController,
 
                 playerId = playerId
             )
         }
 
-        composable(Screen.AddTeam.route) {
+        composable(
+            Screen.AddTeam.route
+        ) {
 
                 backStackEntry ->
 
@@ -327,25 +345,6 @@ fun AppNavGraph(
                 sportType = sportType,
 
                 zone = zone
-            )
-        }
-
-        composable(
-            Screen.LiveScore.route
-        ) {
-
-                backStackEntry ->
-
-            val matchId =
-                backStackEntry.arguments
-                    ?.getString("matchId")
-                    ?: ""
-
-            LiveScoreScreen(
-
-                navController = navController,
-
-                matchId = matchId
             )
         }
     }

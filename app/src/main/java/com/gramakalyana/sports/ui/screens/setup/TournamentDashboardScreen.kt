@@ -3,6 +3,7 @@ package com.gramakalyana.sports.ui.screens.setup
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,6 +12,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -18,6 +22,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -36,8 +42,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.gramakalyana.sports.data.model.CricketLiveData
 import com.gramakalyana.sports.data.model.Team
 import com.gramakalyana.sports.navigation.Screen
+import com.gramakalyana.sports.viewmodel.CricketLiveViewModel
 import com.gramakalyana.sports.viewmodel.MatchViewModel
 import com.gramakalyana.sports.viewmodel.TeamViewModel
 
@@ -60,6 +68,10 @@ fun TournamentDashboardScreen(
         viewModel()
 
     val matchViewModel: MatchViewModel =
+        viewModel()
+
+    val cricketLiveViewModel:
+            CricketLiveViewModel =
         viewModel()
 
     val allTeams by
@@ -443,13 +455,102 @@ fun TournamentDashboardScreen(
 
                             onClick = {
 
-                                navController.navigate(
+                                if (match.status == "COMPLETED") {
 
-                                    Screen.LiveScore.createRoute(
+                                    navController.navigate(
 
-                                        match.matchId
+                                        Screen.MatchDetails
+                                            .createRoute(
+                                                match.matchId
+                                            )
                                     )
-                                )
+
+                                    return@Button
+                                }
+
+                                if (match.sportType == "Cricket") {
+
+                                    val cricketLiveData = CricketLiveData(
+
+                                        matchId =
+                                            match.matchId,
+
+                                        battingTeamId =
+                                            match.teamAId,
+
+                                        bowlingTeamId =
+                                            match.teamBId,
+
+                                        battingTeamName =
+                                            match.teamAName,
+
+                                        bowlingTeamName =
+                                            match.teamBName,
+
+                                        strikerName =
+                                            "Striker",
+
+                                        nonStrikerName =
+                                            "Non-Striker",
+
+                                        bowlerName =
+                                            "Bowler",
+
+                                        matchStatus =
+                                            "LIVE"
+                                    )
+
+                                    cricketLiveViewModel
+                                        .createLiveMatch(
+                                            cricketLiveData
+                                        )
+
+                                    matchViewModel.updateMatch(
+
+                                        match.copy(
+                                            status = "LIVE"
+                                        )
+                                    )
+
+                                    navController.navigate(
+
+                                        Screen
+                                            .LiveScoringCricket
+                                            .createRoute(
+                                                match.matchId
+                                            )
+                                    )
+                                }
+
+                                else if (
+                                    match.sportType ==
+                                    "Kabaddi"
+                                ) {
+
+                                    navController.navigate(
+
+                                        Screen
+                                            .LiveScoringKabaddi
+                                            .createRoute(
+                                                match.matchId
+                                            )
+                                    )
+                                }
+
+                                else if (
+                                    match.sportType ==
+                                    "Volleyball"
+                                ) {
+
+                                    navController.navigate(
+
+                                        Screen
+                                            .LiveScoringVolleyball
+                                            .createRoute(
+                                                match.matchId
+                                            )
+                                    )
+                                }
                             },
 
                             modifier =
@@ -571,54 +672,50 @@ fun TournamentDashboardScreen(
                                 Modifier.height(10.dp)
                         )
 
-                        Button(
+                        Row {
 
-                            onClick = {
+                            IconButton(
 
-                                selectedTeam = team
+                                onClick = {
 
-                                editedTeamName =
-                                    team.teamName
+                                    selectedTeam = team
 
-                                showEditDialog = true
-                            },
+                                    editedTeamName =
+                                        team.teamName
 
-                            modifier =
-                                Modifier.fillMaxWidth(),
+                                    showEditDialog = true
+                                }
+                            ) {
 
-                            shape =
-                                RoundedCornerShape(12.dp)
-                        ) {
+                                Icon(
 
-                            Text(
-                                text = "EDIT TEAM"
-                            )
-                        }
+                                    imageVector =
+                                        Icons.Default.Edit,
 
-                        Spacer(
-                            modifier =
-                                Modifier.height(10.dp)
-                        )
+                                    contentDescription =
+                                        "Edit"
+                                )
+                            }
 
-                        Button(
+                            IconButton(
 
-                            onClick = {
+                                onClick = {
 
-                                selectedTeam = team
+                                    selectedTeam = team
 
-                                showDeleteDialog = true
-                            },
+                                    showDeleteDialog = true
+                                }
+                            ) {
 
-                            modifier =
-                                Modifier.fillMaxWidth(),
+                                Icon(
 
-                            shape =
-                                RoundedCornerShape(12.dp)
-                        ) {
+                                    imageVector =
+                                        Icons.Default.Delete,
 
-                            Text(
-                                text = "DELETE TEAM"
-                            )
+                                    contentDescription =
+                                        "Delete"
+                                )
+                            }
                         }
                     }
                 }

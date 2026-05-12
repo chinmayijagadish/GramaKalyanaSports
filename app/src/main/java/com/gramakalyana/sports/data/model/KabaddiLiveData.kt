@@ -24,5 +24,9 @@ data class KabaddiLiveData(
 
     val allOutCountB: Int = 0,
 
-    val matchStatus: String = "LIVE"
+    val recentRaids: List<String> = emptyList(),
+
+    val matchStatus: String = "LIVE",
+
+    val winner: String = "",
 )
