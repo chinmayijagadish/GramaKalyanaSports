@@ -4,10 +4,8 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,12 +20,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -48,7 +42,9 @@ fun CreateMatchScreen(
 
     tournamentId: String,
 
-    sportType: String
+    sportType: String,
+
+    zone: String
 ) {
 
     val context = LocalContext.current
@@ -181,18 +177,6 @@ fun CreateMatchScreen(
 
             item {
 
-                Text(
-                    text = "Select Teams",
-
-                    style =
-                        MaterialTheme.typography.titleLarge,
-
-                    fontWeight = FontWeight.Bold
-                )
-            }
-
-            item {
-
                 ExposedDropdownMenuBox(
                     expanded = expandedTeamA,
 
@@ -203,11 +187,8 @@ fun CreateMatchScreen(
 
                     OutlinedTextField(
                         value = selectedTeamAName,
-
                         onValueChange = {},
-
                         readOnly = true,
-
                         label = {
                             Text("Select Team A")
                         },
@@ -223,10 +204,7 @@ fun CreateMatchScreen(
                         modifier =
                             Modifier
                                 .fillMaxWidth()
-                                .menuAnchor(),
-
-                        shape =
-                            RoundedCornerShape(14.dp)
+                                .menuAnchor()
                     )
 
                     ExposedDropdownMenu(
@@ -242,7 +220,6 @@ fun CreateMatchScreen(
                             DropdownMenuItem(
 
                                 text = {
-
                                     Text(team.teamName)
                                 },
 
@@ -274,11 +251,8 @@ fun CreateMatchScreen(
 
                     OutlinedTextField(
                         value = selectedTeamBName,
-
                         onValueChange = {},
-
                         readOnly = true,
-
                         label = {
                             Text("Select Team B")
                         },
@@ -294,10 +268,7 @@ fun CreateMatchScreen(
                         modifier =
                             Modifier
                                 .fillMaxWidth()
-                                .menuAnchor(),
-
-                        shape =
-                            RoundedCornerShape(14.dp)
+                                .menuAnchor()
                     )
 
                     ExposedDropdownMenu(
@@ -313,7 +284,6 @@ fun CreateMatchScreen(
                             DropdownMenuItem(
 
                                 text = {
-
                                     Text(team.teamName)
                                 },
 
@@ -336,21 +306,19 @@ fun CreateMatchScreen(
             item {
 
                 OutlinedTextField(
+
                     value = venue,
 
                     onValueChange = {
                         venue = it
                     },
 
-                    label = {
-                        Text("Venue")
-                    },
-
                     modifier =
                         Modifier.fillMaxWidth(),
 
-                    shape =
-                        RoundedCornerShape(14.dp)
+                    label = {
+                        Text("Venue")
+                    }
                 )
             }
 
@@ -364,22 +332,18 @@ fun CreateMatchScreen(
                     },
 
                     modifier =
-                        Modifier.fillMaxWidth(),
-
-                    shape =
-                        RoundedCornerShape(14.dp)
+                        Modifier.fillMaxWidth()
                 ) {
 
                     Text(
 
-                        text = if (date.isBlank()) {
+                        text =
+                            if (date.isBlank())
 
-                            "SELECT MATCH DATE"
+                                "SELECT MATCH DATE"
 
-                        } else {
-
-                            "Date: $date"
-                        }
+                            else
+                                "Date: $date"
                     )
                 }
             }
@@ -394,22 +358,18 @@ fun CreateMatchScreen(
                     },
 
                     modifier =
-                        Modifier.fillMaxWidth(),
-
-                    shape =
-                        RoundedCornerShape(14.dp)
+                        Modifier.fillMaxWidth()
                 ) {
 
                     Text(
 
-                        text = if (time.isBlank()) {
+                        text =
+                            if (time.isBlank())
 
-                            "SELECT MATCH TIME"
+                                "SELECT MATCH TIME"
 
-                        } else {
-
-                            "Time: $time"
-                        }
+                            else
+                                "Time: $time"
                     )
                 }
             }
@@ -430,25 +390,10 @@ fun CreateMatchScreen(
                         ) {
 
                             Toast.makeText(
-                                navController.context,
+
+                                context,
 
                                 "Fill all fields",
-
-                                Toast.LENGTH_SHORT
-                            ).show()
-
-                            return@Button
-                        }
-
-                        if (
-                            selectedTeamAId ==
-                            selectedTeamBId
-                        ) {
-
-                            Toast.makeText(
-                                navController.context,
-
-                                "Teams must be different",
 
                                 Toast.LENGTH_SHORT
                             ).show()
@@ -464,6 +409,14 @@ fun CreateMatchScreen(
                             tournamentId =
                                 tournamentId,
 
+                            tournamentName =
+                                "",
+
+                            zone = zone,
+
+                            sportType =
+                                sportType,
+
                             teamAId =
                                 selectedTeamAId,
 
@@ -476,9 +429,6 @@ fun CreateMatchScreen(
                             teamBName =
                                 selectedTeamBName,
 
-                            sportType =
-                                sportType,
-
                             matchDate =
                                 date,
 
@@ -486,7 +436,29 @@ fun CreateMatchScreen(
                                 time,
 
                             venue =
-                                venue
+                                venue,
+
+                            status =
+                                "UPCOMING",
+
+                            currentPhase =
+                                "",
+
+                            winner =
+                                "",
+
+                            tossWinner =
+                                "",
+
+                            tossDecision =
+                                "",
+
+                            matchNotes =
+                                "",
+
+                            teamAScore = 0,
+
+                            teamBScore = 0
                         )
 
                         matchViewModel.createMatch(
@@ -494,9 +466,10 @@ fun CreateMatchScreen(
                         )
 
                         Toast.makeText(
-                            navController.context,
 
-                            "Match Scheduled",
+                            context,
+
+                            "Match Created",
 
                             Toast.LENGTH_SHORT
                         ).show()

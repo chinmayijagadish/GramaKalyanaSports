@@ -28,4 +28,19 @@ object FirebaseManager {
         database.getReference(
             "grama_kalyana_sports/players"
         )
+
+    val cricketLiveRef =
+        database.getReference(
+            "grama_kalyana_sports/cricket_live"
+        )
+
+    val kabaddiLiveRef =
+        database.getReference(
+            "grama_kalyana_sports/kabaddi_live"
+        )
+
+    val volleyballLiveRef =
+        database.getReference(
+            "grama_kalyana_sports/volleyball_live"
+        )
 }

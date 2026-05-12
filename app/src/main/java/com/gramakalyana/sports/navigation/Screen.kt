@@ -122,14 +122,15 @@ sealed class Screen(val route: String) {
 
     object CreateMatch :
         Screen(
-            "create_match/{tournamentId}/{sportType}"
+            "create_match/{tournamentId}/{sportType}/{zone}"
         ) {
 
         fun createRoute(
             tournamentId: String,
-            sportType: String
+            sportType: String,
+            zone: String
         ) =
-            "create_match/$tournamentId/$sportType"
+            "create_match/$tournamentId/$sportType/$zone"
     }
 
     object LiveScore :

@@ -6,6 +6,12 @@ data class Match(
 
     val tournamentId: String = "",
 
+    val tournamentName: String = "",
+
+    val zone: String = "",
+
+    val sportType: String = "",
+
     val teamAId: String = "",
 
     val teamAName: String = "",
@@ -14,23 +20,26 @@ data class Match(
 
     val teamBName: String = "",
 
-    val sportType: String = "",
-
     val matchDate: String = "",
 
     val matchTime: String = "",
 
     val venue: String = "",
 
-    val status: String = "Upcoming",
+    val status: String = "UPCOMING",
 
-    val teamAScore: Int = 0,
-
-    val teamBScore: Int = 0,
+    val currentPhase: String = "",
 
     val winner: String = "",
 
-    val oversPlayed: String = "",
+    val tossWinner: String = "",
 
-    val matchNotes: String = ""
+    val tossDecision: String = "",
+
+    val matchNotes: String = "",
+
+    // TEMP SCORE SUPPORT
+    val teamAScore: Int = 0,
+
+    val teamBScore: Int = 0
 )

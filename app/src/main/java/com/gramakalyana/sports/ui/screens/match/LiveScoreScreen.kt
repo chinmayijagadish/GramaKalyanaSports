@@ -199,6 +199,22 @@ fun LiveScoreScreen(
                         text =
                             "Venue: ${match.venue}"
                     )
+
+                    Spacer(
+                        modifier =
+                            Modifier.height(8.dp)
+                    )
+
+                    Text(
+                        text =
+                            "Status: ${match.status}",
+
+                        fontWeight =
+                            FontWeight.Bold,
+
+                        color =
+                            MaterialTheme.colorScheme.primary
+                    )
                 }
             }
 
@@ -228,7 +244,7 @@ fun LiveScoreScreen(
                                 teamBScore,
 
                             status =
-                                "Live"
+                                "LIVE"
                         )
 
                     matchViewModel.updateMatch(
@@ -244,7 +260,8 @@ fun LiveScoreScreen(
             ) {
 
                 Text(
-                    text = "ADD SCORE TO ${match.teamAName}"
+                    text =
+                        "ADD SCORE TO ${match.teamAName}"
                 )
             }
 
@@ -274,7 +291,7 @@ fun LiveScoreScreen(
                                 teamBScore,
 
                             status =
-                                "Live"
+                                "LIVE"
                         )
 
                     matchViewModel.updateMatch(
@@ -290,7 +307,8 @@ fun LiveScoreScreen(
             ) {
 
                 Text(
-                    text = "ADD SCORE TO ${match.teamBName}"
+                    text =
+                        "ADD SCORE TO ${match.teamBName}"
                 )
             }
 
@@ -315,7 +333,7 @@ fun LiveScoreScreen(
 
                                 match.teamBName
 
-                            else -> "Draw"
+                            else -> "DRAW"
                         }
 
                     val completedMatch =
@@ -332,7 +350,7 @@ fun LiveScoreScreen(
                                 winner,
 
                             status =
-                                "Completed"
+                                "COMPLETED"
                         )
 
                     matchViewModel.updateMatch(

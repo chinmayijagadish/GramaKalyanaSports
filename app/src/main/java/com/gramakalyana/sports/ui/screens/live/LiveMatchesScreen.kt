@@ -3,21 +3,18 @@ package com.gramakalyana.sports.ui.screens.live
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -26,57 +23,87 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.gramakalyana.sports.data.model.Match
 import com.gramakalyana.sports.navigation.Screen
 import com.gramakalyana.sports.ui.components.GlassmorphismCard
 import com.gramakalyana.sports.ui.components.LiveBadge
+import com.gramakalyana.sports.utils.SelectedZone
+import com.gramakalyana.sports.viewmodel.MatchViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LiveMatchesScreen(navController: NavController) {
+fun LiveMatchesScreen(
+    navController: NavController
+) {
 
-    var selectedFilter by remember {
-        mutableStateOf("All")
-    }
+    val matchViewModel:
+            MatchViewModel = viewModel()
 
-    val filters = listOf(
-        "All",
-        "Cricket",
-        "Kabaddi",
-        "Volleyball"
-    )
+    val allMatches by
+    matchViewModel.matches.collectAsState()
 
-    val matches = listOf(
-        "Cricket",
-        "Kabaddi",
-        "Volleyball",
-        "Cricket",
-        "Kabaddi"
-    )
+    val selectedZone =
+        SelectedZone.selectedZone
 
-    val filteredMatches =
-        if (selectedFilter == "All")
-            matches
-        else
-            matches.filter { it == selectedFilter }
+    val zoneMatches =
+        allMatches.filter {
+
+            it.zone
+                .trim()
+                .lowercase() ==
+
+                    selectedZone
+                        .trim()
+                        .lowercase()
+        }
+
+    val liveMatches =
+        zoneMatches.filter {
+
+            it.status
+                .trim()
+                .uppercase() == "LIVE"
+        }
+
+    val upcomingMatches =
+        zoneMatches.filter {
+
+            it.status
+                .trim()
+                .uppercase() == "UPCOMING"
+        }
+
+    val completedMatches =
+        zoneMatches.filter {
+
+            it.status
+                .trim()
+                .uppercase() == "COMPLETED"
+        }
 
     Scaffold(
 
         topBar = {
 
             TopAppBar(
+
                 title = {
+
                     Text(
-                        text = "Live Matches",
-                        fontWeight = FontWeight.Bold
+
+                        text =
+                            "$selectedZone Matches",
+
+                        fontWeight =
+                            FontWeight.Bold
                     )
                 },
 
@@ -84,105 +111,209 @@ fun LiveMatchesScreen(navController: NavController) {
 
                     IconButton(
                         onClick = {
+
                             navController.popBackStack()
                         }
                     ) {
 
                         Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Back"
+                            imageVector =
+                                Icons.Default.ArrowBack,
+
+                            contentDescription = null
                         )
                     }
                 },
 
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
-                )
+                colors =
+                    TopAppBarDefaults.topAppBarColors(
+
+                        containerColor =
+                            MaterialTheme.colorScheme.background
+                    )
             )
         }
 
     ) { paddingValues ->
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-                .padding(paddingValues)
-        ) {
+        // LOADING STATE
 
-            LazyRow(
-                modifier = Modifier.padding(
-                    horizontal = 16.dp,
-                    vertical = 12.dp
-                ),
+        if (allMatches.isEmpty()) {
 
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-
-                items(filters) { filter ->
-
-                    FilterChip(
-                        selected = selectedFilter == filter,
-
-                        onClick = {
-                            selectedFilter = filter
-                        },
-
-                        label = {
-                            Text(filter)
-                        },
-
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor =
-                                MaterialTheme.colorScheme.primary,
-
-                            selectedLabelColor =
-                                MaterialTheme.colorScheme.onPrimary
-                        )
-                    )
-                }
-            }
-
-            Text(
-                text = "Watch ongoing village tournaments live",
-                style = MaterialTheme.typography.bodyMedium,
-
-                color = MaterialTheme.colorScheme.onSurface.copy(
-                    alpha = 0.7f
-                ),
-
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
-
-            Spacer(modifier = Modifier.height(14.dp))
-
-            LazyColumn(
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 16.dp),
+                    .padding(paddingValues),
 
-                verticalArrangement = Arrangement.spacedBy(18.dp)
+                contentAlignment =
+                    Alignment.Center
             ) {
 
-                items(filteredMatches.size) { index ->
+                Text(
+                    text =
+                        "Loading matches..."
+                )
+            }
+        }
 
-                    DetailedLiveMatchCard(
+        // NO MATCHES
 
-                        sportType = filteredMatches[index],
+        else if (zoneMatches.isEmpty()) {
 
-                        onClick = {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
 
-                            navController.navigate(
-                                Screen.MatchDetails.createRoute(
-                                    "match_$index"
-                                )
-                            )
-                        }
+                contentAlignment =
+                    Alignment.Center
+            ) {
+
+                Text(
+                    text =
+                        "No matches available"
+                )
+            }
+        }
+
+        // MATCHES AVAILABLE
+
+        else {
+
+            LazyColumn(
+
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        MaterialTheme.colorScheme.background
                     )
+                    .padding(paddingValues)
+                    .padding(horizontal = 16.dp),
+
+                verticalArrangement =
+                    Arrangement.spacedBy(22.dp)
+            ) {
+
+                // LIVE MATCHES
+
+                item {
+
+                    MatchSectionTitle(
+                        title = "LIVE MATCHES"
+                    )
+                }
+
+                if (liveMatches.isEmpty()) {
+
+                    item {
+
+                        EmptySectionText()
+                    }
+
+                } else {
+
+                    items(liveMatches) { match ->
+
+                        RealtimeMatchCard(
+
+                            match = match,
+
+                            onClick = {
+
+                                navController.navigate(
+
+                                    Screen.MatchDetails
+                                        .createRoute(
+                                            match.matchId
+                                        )
+                                )
+                            }
+                        )
+                    }
+                }
+
+                // UPCOMING MATCHES
+
+                item {
+
+                    MatchSectionTitle(
+                        title = "UPCOMING MATCHES"
+                    )
+                }
+
+                if (upcomingMatches.isEmpty()) {
+
+                    item {
+
+                        EmptySectionText()
+                    }
+
+                } else {
+
+                    items(upcomingMatches) { match ->
+
+                        RealtimeMatchCard(
+
+                            match = match,
+
+                            onClick = {
+
+                                navController.navigate(
+
+                                    Screen.MatchDetails
+                                        .createRoute(
+                                            match.matchId
+                                        )
+                                )
+                            }
+                        )
+                    }
+                }
+
+                // COMPLETED MATCHES
+
+                item {
+
+                    MatchSectionTitle(
+                        title = "COMPLETED MATCHES"
+                    )
+                }
+
+                if (completedMatches.isEmpty()) {
+
+                    item {
+
+                        EmptySectionText()
+                    }
+
+                } else {
+
+                    items(completedMatches) { match ->
+
+                        RealtimeMatchCard(
+
+                            match = match,
+
+                            onClick = {
+
+                                navController.navigate(
+
+                                    Screen.MatchDetails
+                                        .createRoute(
+                                            match.matchId
+                                        )
+                                )
+                            }
+                        )
+                    }
                 }
 
                 item {
-                    Spacer(modifier = Modifier.height(90.dp))
+
+                    Spacer(
+                        modifier =
+                            Modifier.height(100.dp)
+                    )
                 }
             }
         }
@@ -190,159 +321,127 @@ fun LiveMatchesScreen(navController: NavController) {
 }
 
 @Composable
-fun DetailedLiveMatchCard(
-    sportType: String,
+fun MatchSectionTitle(
+    title: String
+) {
+
+    Text(
+
+        text = title,
+
+        style =
+            MaterialTheme.typography.titleLarge,
+
+        fontWeight =
+            FontWeight.ExtraBold,
+
+        color =
+            MaterialTheme.colorScheme.primary
+    )
+}
+
+@Composable
+fun EmptySectionText() {
+
+    Text(
+
+        text = "No matches",
+
+        color =
+            MaterialTheme.colorScheme.onSurface.copy(
+                alpha = 0.6f
+            )
+    )
+}
+
+@Composable
+fun RealtimeMatchCard(
+
+    match: Match,
+
     onClick: () -> Unit
 ) {
 
     GlassmorphismCard(
+
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .clickable(
+                onClick = onClick
+            )
     ) {
 
         Column(
-            modifier = Modifier.padding(18.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            modifier =
+                Modifier.padding(18.dp),
+
+            verticalArrangement =
+                Arrangement.spacedBy(12.dp)
         ) {
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
+            androidx.compose.foundation.layout.Row(
+                verticalAlignment =
+                    Alignment.CenterVertically
             ) {
 
                 Text(
-                    text = "$sportType - Semi Final",
-                    style = MaterialTheme.typography.labelMedium,
 
-                    color = MaterialTheme.colorScheme.primary
+                    text =
+                        "${match.sportType} Match",
+
+                    color =
+                        MaterialTheme.colorScheme.primary,
+
+                    fontWeight =
+                        FontWeight.Bold
                 )
 
-                Spacer(modifier = Modifier.weight(1f))
-
-                LiveBadge()
-            }
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-
-                horizontalArrangement =
-                    Arrangement.SpaceBetween,
-
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-
-                Text(
-                    text = "Riders FC",
-
-                    style = MaterialTheme.typography.titleLarge,
-
-                    fontWeight = FontWeight.Bold
+                Spacer(
+                    modifier =
+                        Modifier.weight(1f)
                 )
 
-                Text(
-                    text = "vs",
-
-                    color = MaterialTheme.colorScheme.onSurface.copy(
-                        alpha = 0.5f
-                    )
-                )
-
-                Text(
-                    text = "Vikings",
-
-                    style = MaterialTheme.typography.titleLarge,
-
-                    fontWeight = FontWeight.Bold
-                )
-            }
-
-            if (sportType == "Cricket") {
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-
-                    horizontalArrangement =
-                        Arrangement.SpaceBetween
+                if (
+                    match.status
+                        .trim()
+                        .uppercase() == "LIVE"
                 ) {
 
-                    Text(
-                        text = "143/5 (18.1)",
-
-                        style = MaterialTheme.typography.titleMedium,
-
-                        color = MaterialTheme.colorScheme.primary,
-
-                        fontWeight = FontWeight.Bold
-                    )
-
-                    Text(
-                        text = "Yet to bat",
-
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-
-            } else if (sportType == "Kabaddi") {
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-
-                    horizontalArrangement =
-                        Arrangement.SpaceBetween
-                ) {
-
-                    Text(
-                        text = "24 Points",
-
-                        style = MaterialTheme.typography.titleMedium,
-
-                        color = MaterialTheme.colorScheme.primary,
-
-                        fontWeight = FontWeight.Bold
-                    )
-
-                    Text(
-                        text = "19 Points",
-
-                        style = MaterialTheme.typography.titleMedium,
-
-                        color = MaterialTheme.colorScheme.secondary,
-
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-
-            } else {
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-
-                    horizontalArrangement =
-                        Arrangement.SpaceBetween
-                ) {
-
-                    Text(
-                        text = "2 Sets",
-
-                        style = MaterialTheme.typography.titleMedium,
-
-                        color = MaterialTheme.colorScheme.primary,
-
-                        fontWeight = FontWeight.Bold
-                    )
-
-                    Text(
-                        text = "1 Set",
-
-                        style = MaterialTheme.typography.titleMedium,
-
-                        color = MaterialTheme.colorScheme.secondary,
-
-                        fontWeight = FontWeight.Bold
-                    )
+                    LiveBadge()
                 }
             }
+
+            Text(
+
+                text =
+                    "${match.teamAName} vs ${match.teamBName}",
+
+                style =
+                    MaterialTheme.typography.titleLarge,
+
+                fontWeight =
+                    FontWeight.Bold
+            )
+
+            Text(
+                text =
+                    "Venue: ${match.venue}"
+            )
+
+            Text(
+                text =
+                    "Date: ${match.matchDate}"
+            )
+
+            Text(
+                text =
+                    "Time: ${match.matchTime}"
+            )
+
+            Text(
+                text =
+                    "Status: ${match.status}"
+            )
         }
     }
 }

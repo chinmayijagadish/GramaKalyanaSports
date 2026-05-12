@@ -50,6 +50,13 @@ val sportsList = listOf(
     "Volleyball"
 )
 
+val zonesList = listOf(
+    "Rural",
+    "Urban",
+    "North",
+    "South"
+)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TournamentSetupScreen(
@@ -60,7 +67,7 @@ fun TournamentSetupScreen(
         mutableStateOf("")
     }
 
-    var location by remember {
+    var selectedZone by remember {
         mutableStateOf("")
     }
 
@@ -68,7 +75,11 @@ fun TournamentSetupScreen(
         mutableStateOf("")
     }
 
-    var expanded by remember {
+    var expandedSport by remember {
+        mutableStateOf(false)
+    }
+
+    var expandedZone by remember {
         mutableStateOf(false)
     }
 
@@ -187,29 +198,77 @@ fun TournamentSetupScreen(
 
                 Spacer(modifier = Modifier.height(14.dp))
 
-                OutlinedTextField(
-                    value = location,
+                // ZONE DROPDOWN
 
-                    onValueChange = {
-                        location = it
-                    },
+                ExposedDropdownMenuBox(
+                    expanded = expandedZone,
 
-                    label = {
-                        Text("Zone / Village Location")
-                    },
+                    onExpandedChange = {
+                        expandedZone = !expandedZone
+                    }
+                ) {
 
-                    modifier = Modifier.fillMaxWidth(),
+                    OutlinedTextField(
+                        value = selectedZone,
 
-                    shape = RoundedCornerShape(14.dp)
-                )
+                        onValueChange = {},
+
+                        readOnly = true,
+
+                        label = {
+                            Text("Select Zone")
+                        },
+
+                        trailingIcon = {
+
+                            ExposedDropdownMenuDefaults
+                                .TrailingIcon(
+                                    expanded = expandedZone
+                                )
+                        },
+
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor(),
+
+                        shape = RoundedCornerShape(14.dp)
+                    )
+
+                    ExposedDropdownMenu(
+                        expanded = expandedZone,
+
+                        onDismissRequest = {
+                            expandedZone = false
+                        }
+                    ) {
+
+                        zonesList.forEach { zone ->
+
+                            DropdownMenuItem(
+                                text = {
+                                    Text(zone)
+                                },
+
+                                onClick = {
+
+                                    selectedZone = zone
+
+                                    expandedZone = false
+                                }
+                            )
+                        }
+                    }
+                }
 
                 Spacer(modifier = Modifier.height(14.dp))
 
+                // SPORT DROPDOWN
+
                 ExposedDropdownMenuBox(
-                    expanded = expanded,
+                    expanded = expandedSport,
 
                     onExpandedChange = {
-                        expanded = !expanded
+                        expandedSport = !expandedSport
                     }
                 ) {
 
@@ -228,7 +287,7 @@ fun TournamentSetupScreen(
 
                             ExposedDropdownMenuDefaults
                                 .TrailingIcon(
-                                    expanded = expanded
+                                    expanded = expandedSport
                                 )
                         },
 
@@ -240,10 +299,10 @@ fun TournamentSetupScreen(
                     )
 
                     ExposedDropdownMenu(
-                        expanded = expanded,
+                        expanded = expandedSport,
 
                         onDismissRequest = {
-                            expanded = false
+                            expandedSport = false
                         }
                     ) {
 
@@ -258,7 +317,7 @@ fun TournamentSetupScreen(
 
                                     selectedSport = sport
 
-                                    expanded = false
+                                    expandedSport = false
                                 }
                             )
                         }
@@ -312,7 +371,7 @@ fun TournamentSetupScreen(
 
                         if (
                             tournamentName.isBlank() ||
-                            location.isBlank() ||
+                            selectedZone.isBlank() ||
                             selectedSport.isBlank() ||
                             selectedDate.isBlank()
                         ) {
@@ -339,7 +398,7 @@ fun TournamentSetupScreen(
 
                             sportType = selectedSport,
 
-                            zone = location,
+                            zone = selectedZone,
 
                             startDate = selectedDate,
 
@@ -362,7 +421,7 @@ fun TournamentSetupScreen(
 
                                 selectedSport,
 
-                                location
+                                selectedZone
                             )
 
                         ) {

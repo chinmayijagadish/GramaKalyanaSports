@@ -30,11 +30,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,20 +39,25 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.gramakalyana.sports.navigation.Screen
+import com.gramakalyana.sports.utils.SelectedZone
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ZoneSelectionScreen(navController: NavController) {
+fun ZoneSelectionScreen(
+    navController: NavController
+) {
 
     var searchQuery by remember {
         mutableStateOf("")
     }
 
     var selectedZone by remember {
-        mutableStateOf<String?>(null)
+        mutableStateOf("")
     }
 
     val zones = listOf(
+
         "North Zone",
         "South Zone",
         "East Zone",
@@ -66,14 +67,21 @@ fun ZoneSelectionScreen(navController: NavController) {
     )
 
     val filteredZones = zones.filter {
-        it.contains(searchQuery, ignoreCase = true)
+
+        it.contains(
+            searchQuery,
+            ignoreCase = true
+        )
     }
 
     Scaffold(
+
         topBar = {
 
             TopAppBar(
+
                 title = {
+
                     Text(
                         text = "Select Zone",
                         fontWeight = FontWeight.Bold
@@ -96,7 +104,9 @@ fun ZoneSelectionScreen(navController: NavController) {
                 },
 
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
+
+                    containerColor =
+                        MaterialTheme.colorScheme.background
                 )
             )
         }
@@ -106,80 +116,92 @@ fun ZoneSelectionScreen(navController: NavController) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
+                .background(
+                    MaterialTheme.colorScheme.background
+                )
                 .padding(paddingValues)
-                .padding(horizontal = 16.dp, vertical = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(18.dp)
+                .padding(16.dp),
+
+            verticalArrangement =
+                Arrangement.spacedBy(18.dp)
         ) {
 
             OutlinedTextField(
+
                 value = searchQuery,
 
                 onValueChange = {
                     searchQuery = it
                 },
 
-                modifier = Modifier.fillMaxWidth(),
+                modifier =
+                    Modifier.fillMaxWidth(),
 
                 placeholder = {
                     Text("Search zones...")
                 },
 
                 leadingIcon = {
+
                     Icon(
-                        imageVector = Icons.Default.Search,
+                        imageVector =
+                            Icons.Default.Search,
                         contentDescription = null
                     )
                 },
 
-                shape = RoundedCornerShape(18.dp),
+                shape =
+                    RoundedCornerShape(18.dp),
 
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = MaterialTheme.colorScheme.primary,
-                    unfocusedBorderColor = MaterialTheme.colorScheme.outline
-                )
+                colors =
+                    OutlinedTextFieldDefaults.colors(
+
+                        focusedBorderColor =
+                            MaterialTheme.colorScheme.primary,
+
+                        unfocusedBorderColor =
+                            MaterialTheme.colorScheme.outline
+                    )
             )
 
-            if (filteredZones.isEmpty()) {
+            LazyVerticalGrid(
 
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
+                columns = GridCells.Fixed(2),
 
-                    Text(
-                        text = "No zones found",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                modifier = Modifier.weight(1f),
+
+                contentPadding =
+                    PaddingValues(bottom = 100.dp),
+
+                horizontalArrangement =
+                    Arrangement.spacedBy(16.dp),
+
+                verticalArrangement =
+                    Arrangement.spacedBy(16.dp)
+
+            ) {
+
+                items(filteredZones) { zone ->
+
+                    ZoneCard(
+
+                        name = zone,
+
+                        isSelected =
+                            selectedZone == zone,
+
+                        onClick = {
+
+                            selectedZone = zone
+
+                            SelectedZone.selectedZone =
+                                zone
+
+                            navController.navigate(
+                                Screen.LiveMatches.route
+                            )
+                        }
                     )
-                }
-
-            } else {
-
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-
-                    modifier = Modifier.weight(1f),
-
-                    contentPadding = PaddingValues(bottom = 100.dp),
-
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-
-                    items(filteredZones) { zone ->
-
-                        ZoneCard(
-                            name = zone,
-
-                            isSelected = selectedZone == zone,
-
-                            onClick = {
-                                selectedZone = zone
-                            }
-                        )
-                    }
                 }
             }
         }
@@ -188,8 +210,11 @@ fun ZoneSelectionScreen(navController: NavController) {
 
 @Composable
 fun ZoneCard(
+
     name: String,
+
     isSelected: Boolean,
+
     onClick: () -> Unit
 ) {
 
@@ -201,60 +226,88 @@ fun ZoneCard(
 
     val backgroundColor =
         if (isSelected)
-            MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
+
+            MaterialTheme.colorScheme.primary.copy(
+                alpha = 0.12f
+            )
+
         else
             MaterialTheme.colorScheme.surfaceVariant
 
     Box(
+
         modifier = Modifier
             .fillMaxWidth()
             .height(140.dp)
             .clip(RoundedCornerShape(20.dp))
             .background(backgroundColor)
             .border(
+
                 width = 2.dp,
+
                 color = borderColor,
+
                 shape = RoundedCornerShape(20.dp)
             )
-            .clickable(onClick = onClick)
+
+            .clickable(
+                onClick = onClick
+            )
+
             .padding(18.dp),
 
         contentAlignment = Alignment.Center
     ) {
 
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+
+            horizontalAlignment =
+                Alignment.CenterHorizontally,
+
+            verticalArrangement =
+                Arrangement.spacedBy(10.dp)
         ) {
 
             Icon(
-                imageVector = Icons.Default.LocationOn,
+
+                imageVector =
+                    Icons.Default.LocationOn,
+
                 contentDescription = null,
+
                 modifier = Modifier.size(32.dp),
 
                 tint =
                     if (isSelected)
+
                         MaterialTheme.colorScheme.primary
+
                     else
                         MaterialTheme.colorScheme.onSurface
             )
 
             Text(
+
                 text = name,
 
                 textAlign = TextAlign.Center,
 
                 fontWeight =
                     if (isSelected)
+
                         FontWeight.Bold
+
                     else
                         FontWeight.Medium,
 
-                style = MaterialTheme.typography.bodyLarge,
+                style =
+                    MaterialTheme.typography.bodyLarge,
 
                 color =
                     if (isSelected)
+
                         MaterialTheme.colorScheme.primary
+
                     else
                         MaterialTheme.colorScheme.onSurface
             )

@@ -10,6 +10,7 @@ import com.gramakalyana.sports.ui.screens.live.LiveMatchesScreen
 import com.gramakalyana.sports.ui.screens.live.MatchDetailsScreen
 import com.gramakalyana.sports.ui.screens.match.CreateMatchScreen
 import com.gramakalyana.sports.ui.screens.match.LiveScoreScreen
+import com.gramakalyana.sports.ui.screens.player.AddPlayerScreen
 import com.gramakalyana.sports.ui.screens.player.TeamPlayersScreen
 import com.gramakalyana.sports.ui.screens.scoring.CricketScoringScreen
 import com.gramakalyana.sports.ui.screens.scoring.KabaddiScoringScreen
@@ -21,7 +22,6 @@ import com.gramakalyana.sports.ui.screens.splash.SplashScreen
 import com.gramakalyana.sports.ui.screens.stats.PlayerStatsScreen
 import com.gramakalyana.sports.ui.screens.tournament.TournamentHomeScreen
 import com.gramakalyana.sports.ui.screens.zone.ZoneSelectionScreen
-import com.gramakalyana.sports.ui.screens.player.AddPlayerScreen
 
 @Composable
 fun AppNavGraph(
@@ -313,13 +313,20 @@ fun AppNavGraph(
                     ?.getString("sportType")
                     ?: ""
 
+            val zone =
+                backStackEntry.arguments
+                    ?.getString("zone")
+                    ?: ""
+
             CreateMatchScreen(
 
                 navController = navController,
 
                 tournamentId = tournamentId,
 
-                sportType = sportType
+                sportType = sportType,
+
+                zone = zone
             )
         }
 

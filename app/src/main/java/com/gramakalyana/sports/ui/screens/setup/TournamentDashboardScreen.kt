@@ -341,7 +341,9 @@ fun TournamentDashboardScreen(
 
                                 tournamentId,
 
-                                sport
+                                sport,
+
+                                zone
                             )
                         )
                     },
