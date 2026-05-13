@@ -74,4 +74,41 @@ class VolleyballLiveViewModel : ViewModel() {
                 }
             )
     }
+
+    fun finishMatch(
+        data: VolleyballLiveData
+    ) {
+
+        val winner =
+
+            when {
+
+                data.teamASets >
+                        data.teamBSets ->
+                    data.teamAName
+
+                data.teamBSets >
+                        data.teamASets ->
+                    data.teamBName
+
+                else ->
+                    "DRAW"
+            }
+
+        val updated =
+
+            data.copy(
+
+                winner = winner,
+
+                resultText =
+                    "$winner won the match",
+
+                matchCompleted = true,
+
+                matchStatus = "COMPLETED"
+            )
+
+        updateLiveMatch(updated)
+    }
 }

@@ -3,17 +3,21 @@ package com.gramakalyana.sports.ui.screens.scoring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -23,18 +27,17 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.gramakalyana.sports.logic.VolleyballLogic
-import com.gramakalyana.sports.logic.VolleyballState
 import com.gramakalyana.sports.ui.components.GlassmorphismCard
+import com.gramakalyana.sports.viewmodel.VolleyballLiveViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,17 +48,21 @@ fun VolleyballScoringScreen(
     matchId: String?
 ) {
 
-    val logic = remember {
+    if (matchId == null) return
 
-        VolleyballLogic()
-    }
+    val volleyballViewModel:
+            VolleyballLiveViewModel =
+        viewModel()
 
-    var state by remember {
+    LaunchedEffect(Unit) {
 
-        mutableStateOf(
-            VolleyballState()
+        volleyballViewModel.observeLiveMatch(
+            matchId
         )
     }
+
+    val liveData by
+    volleyballViewModel.liveMatch.collectAsState()
 
     Scaffold(
 
@@ -66,10 +73,8 @@ fun VolleyballScoringScreen(
                 title = {
 
                     Text(
-                        "Volleyball Panel",
-
-                        fontWeight =
-                            FontWeight.Bold
+                        text = "Volleyball Scoring",
+                        fontWeight = FontWeight.Bold
                     )
                 },
 
@@ -77,25 +82,20 @@ fun VolleyballScoringScreen(
 
                     IconButton(
                         onClick = {
-
                             navController.popBackStack()
                         }
                     ) {
 
                         Icon(
-
                             imageVector =
                                 Icons.Default.ArrowBack,
-
-                            contentDescription =
-                                "Back"
+                            contentDescription = null
                         )
                     }
                 },
 
                 colors =
                     TopAppBarDefaults.topAppBarColors(
-
                         containerColor =
                             MaterialTheme.colorScheme.background
                     )
@@ -104,349 +104,428 @@ fun VolleyballScoringScreen(
 
     ) { paddingValues ->
 
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .background(
                     MaterialTheme.colorScheme.background
                 )
                 .padding(paddingValues)
-                .padding(16.dp)
+                .padding(16.dp),
+
+            verticalArrangement =
+                Arrangement.spacedBy(18.dp)
         ) {
 
-            VolleyballScoreboardHeader(
-                state
-            )
+            item {
 
-            Spacer(
-                modifier =
-                    Modifier.height(24.dp)
-            )
+                GlassmorphismCard(
+                    modifier =
+                        Modifier.fillMaxWidth()
+                ) {
 
-            VolleyballScoringControls(
+                    Column(
+                        modifier =
+                            Modifier.padding(20.dp),
 
-                onTeamA = {
+                        verticalArrangement =
+                            Arrangement.spacedBy(14.dp)
+                    ) {
 
-                    state =
-                        logic.addTeamAPoint()
-                },
+                        Text(
 
-                onTeamB = {
+                            text =
+                                "${liveData.teamAName} ${liveData.teamAPoints} - ${liveData.teamBPoints} ${liveData.teamBName}",
 
-                    state =
-                        logic.addTeamBPoint()
-                },
+                            style =
+                                MaterialTheme.typography.headlineSmall,
 
-                onEndSet = {
+                            fontWeight =
+                                FontWeight.ExtraBold
+                        )
 
-                    state =
-                        logic.endSet()
+                        Text(
+                            text =
+                                "Set ${liveData.currentSet}"
+                        )
+
+                        Text(
+                            text =
+                                "Sets: ${liveData.teamASets} - ${liveData.teamBSets}"
+                        )
+
+                        Text(
+                            text =
+                                "Serving Team: ${liveData.servingTeam}"
+                        )
+
+                        if (liveData.matchPoint) {
+
+                            Text(
+
+                                text =
+                                    "MATCH POINT",
+
+                                color =
+                                    MaterialTheme.colorScheme.error,
+
+                                fontWeight =
+                                    FontWeight.Bold
+                            )
+                        }
+                    }
                 }
-            )
+            }
+
+            item {
+
+                Text(
+                    text = "Recent Points",
+                    fontWeight = FontWeight.Bold
+                )
+
+                Spacer(
+                    modifier =
+                        Modifier.height(8.dp)
+                )
+
+                FlowRow(
+
+                    horizontalArrangement =
+                        Arrangement.spacedBy(8.dp),
+
+                    verticalArrangement =
+                        Arrangement.spacedBy(8.dp)
+                ) {
+
+                    liveData.recentPoints.forEach {
+
+                        Card(
+
+                            colors =
+                                CardDefaults.cardColors(
+
+                                    containerColor =
+                                        MaterialTheme.colorScheme.primaryContainer
+                                )
+                        ) {
+
+                            Text(
+
+                                text = it,
+
+                                modifier =
+                                    Modifier.padding(
+                                        horizontal = 14.dp,
+                                        vertical = 10.dp
+                                    )
+                            )
+                        }
+                    }
+                }
+            }
+
+            item {
+
+                Row(
+                    horizontalArrangement =
+                        Arrangement.spacedBy(10.dp)
+                ) {
+
+                    VolleyballButton(
+                        text = "+1 Team A"
+                    ) {
+
+                        var updated =
+
+                            liveData.copy(
+
+                                teamAPoints =
+                                    liveData.teamAPoints + 1,
+
+                                servingTeam = "A",
+
+                                recentPoints =
+                                    (
+                                            liveData.recentPoints +
+                                                    "A +1"
+                                            ).takeLast(10)
+                            )
+
+                        if (
+
+                            updated.teamAPoints >= 25 &&
+
+                            updated.teamAPoints -
+                            updated.teamBPoints >= 2
+                        ) {
+
+                            updated =
+
+                                updated.copy(
+
+                                    teamASets =
+                                        updated.teamASets + 1,
+
+                                    setResults =
+                                        (
+                                                updated.setResults +
+                                                        "${updated.teamAPoints}-${updated.teamBPoints}"
+                                                ),
+
+                                    currentSet =
+                                        updated.currentSet + 1,
+
+                                    teamAPoints = 0,
+
+                                    teamBPoints = 0
+                                )
+                        }
+
+                        if (updated.teamASets == 3) {
+
+                            volleyballViewModel
+                                .finishMatch(updated)
+
+                        } else {
+
+                            volleyballViewModel
+                                .updateLiveMatch(updated)
+                        }
+                    }
+
+                    VolleyballButton(
+                        text = "+1 Team B"
+                    ) {
+
+                        var updated =
+
+                            liveData.copy(
+
+                                teamBPoints =
+                                    liveData.teamBPoints + 1,
+
+                                servingTeam = "B",
+
+                                recentPoints =
+                                    (
+                                            liveData.recentPoints +
+                                                    "B +1"
+                                            ).takeLast(10)
+                            )
+
+                        if (
+
+                            updated.teamBPoints >= 25 &&
+
+                            updated.teamBPoints -
+                            updated.teamAPoints >= 2
+                        ) {
+
+                            updated =
+
+                                updated.copy(
+
+                                    teamBSets =
+                                        updated.teamBSets + 1,
+
+                                    setResults =
+                                        (
+                                                updated.setResults +
+                                                        "${updated.teamAPoints}-${updated.teamBPoints}"
+                                                ),
+
+                                    currentSet =
+                                        updated.currentSet + 1,
+
+                                    teamAPoints = 0,
+
+                                    teamBPoints = 0
+                                )
+                        }
+
+                        if (updated.teamBSets == 3) {
+
+                            volleyballViewModel
+                                .finishMatch(updated)
+
+                        } else {
+
+                            volleyballViewModel
+                                .updateLiveMatch(updated)
+                        }
+                    }
+                }
+            }
+
+            item {
+
+                Row(
+                    horizontalArrangement =
+                        Arrangement.spacedBy(10.dp)
+                ) {
+
+                    VolleyballButton(
+                        text = "Timeout A"
+                    ) {
+
+                        if (liveData.timeoutA > 0) {
+
+                            volleyballViewModel
+                                .updateLiveMatch(
+
+                                    liveData.copy(
+
+                                        timeoutA =
+                                            liveData.timeoutA - 1
+                                    )
+                                )
+                        }
+                    }
+
+                    VolleyballButton(
+                        text = "Timeout B"
+                    ) {
+
+                        if (liveData.timeoutB > 0) {
+
+                            volleyballViewModel
+                                .updateLiveMatch(
+
+                                    liveData.copy(
+
+                                        timeoutB =
+                                            liveData.timeoutB - 1
+                                    )
+                                )
+                        }
+                    }
+                }
+            }
+
+            item {
+
+                Button(
+
+                    onClick = {
+
+                        volleyballViewModel
+                            .finishMatch(liveData)
+                    },
+
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(56.dp),
+
+                    shape =
+                        RoundedCornerShape(14.dp),
+
+                    colors =
+                        ButtonDefaults.buttonColors(
+
+                            containerColor =
+                                MaterialTheme.colorScheme.primary
+                        )
+                ) {
+
+                    Text(
+                        text = "FINISH MATCH",
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+
+            if (liveData.matchCompleted) {
+
+                item {
+
+                    Card(
+
+                        modifier =
+                            Modifier.fillMaxWidth(),
+
+                        shape =
+                            RoundedCornerShape(18.dp),
+
+                        colors =
+                            CardDefaults.cardColors(
+
+                                containerColor =
+                                    Color(0xFF1B5E20)
+                            )
+                    ) {
+
+                        Column(
+                            modifier =
+                                Modifier.padding(20.dp)
+                        ) {
+
+                            Text(
+
+                                text =
+                                    "RESULT",
+
+                                color =
+                                    Color.White,
+
+                                fontWeight =
+                                    FontWeight.Bold
+                            )
+
+                            Spacer(
+                                modifier =
+                                    Modifier.height(10.dp)
+                            )
+
+                            Text(
+
+                                text =
+                                    liveData.resultText,
+
+                                color =
+                                    Color.White,
+
+                                style =
+                                    MaterialTheme.typography.titleLarge,
+
+                                fontWeight =
+                                    FontWeight.ExtraBold
+                            )
+                        }
+                    }
+                }
+            }
+
+            item {
+
+                Spacer(
+                    modifier =
+                        Modifier.height(100.dp)
+                )
+            }
         }
     }
 }
 
 @Composable
-fun VolleyballScoreboardHeader(
-    state: VolleyballState
+fun VolleyballButton(
+    text: String,
+    onClick: () -> Unit
 ) {
 
-    GlassmorphismCard(
+    Button(
+
+        onClick = onClick,
+
         modifier =
-            Modifier.fillMaxWidth()
+            Modifier.fillMaxWidth(),
+
+        shape =
+            RoundedCornerShape(12.dp)
     ) {
 
-        Column(
-            modifier =
-                Modifier.padding(24.dp)
-        ) {
-
-            Text(
-
-                "Set ${state.currentSet}",
-
-                style =
-                    MaterialTheme.typography.titleMedium,
-
-                fontWeight =
-                    FontWeight.Bold,
-
-                modifier =
-                    Modifier.align(
-                        Alignment.CenterHorizontally
-                    )
-            )
-
-            Spacer(
-                modifier =
-                    Modifier.height(8.dp)
-            )
-
-            Row(
-                modifier =
-                    Modifier.fillMaxWidth(),
-
-                horizontalArrangement =
-                    Arrangement.SpaceBetween,
-
-                verticalAlignment =
-                    Alignment.CenterVertically
-            ) {
-
-                Column(
-                    horizontalAlignment =
-                        Alignment.CenterHorizontally
-                ) {
-
-                    Text(
-
-                        "Spikers",
-
-                        style =
-                            MaterialTheme.typography.titleMedium,
-
-                        color =
-                            MaterialTheme.colorScheme.primary
-                    )
-
-                    Text(
-                        "Sets: ${state.teamASets}"
-                    )
-
-                    Text(
-
-                        "${state.teamAPoints}",
-
-                        style =
-                            MaterialTheme.typography.displayLarge,
-
-                        fontWeight =
-                            FontWeight.Bold
-                    )
-                }
-
-                Text(
-                    "vs"
-                )
-
-                Column(
-                    horizontalAlignment =
-                        Alignment.CenterHorizontally
-                ) {
-
-                    Text(
-
-                        "Blockers",
-
-                        style =
-                            MaterialTheme.typography.titleMedium,
-
-                        color =
-                            MaterialTheme.colorScheme.secondary
-                    )
-
-                    Text(
-                        "Sets: ${state.teamBSets}"
-                    )
-
-                    Text(
-
-                        "${state.teamBPoints}",
-
-                        style =
-                            MaterialTheme.typography.displayLarge,
-
-                        fontWeight =
-                            FontWeight.Bold
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun VolleyballScoringControls(
-
-    onTeamA: () -> Unit,
-
-    onTeamB: () -> Unit,
-
-    onEndSet: () -> Unit
-) {
-
-    Column(
-        modifier =
-            Modifier.fillMaxSize()
-    ) {
-
-        Row(
-            modifier =
-                Modifier.fillMaxWidth(),
-
-            horizontalArrangement =
-                Arrangement.SpaceBetween
-        ) {
-
-            Button(
-
-                onClick = {
-
-                    onTeamA()
-                },
-
-                modifier = Modifier
-                    .weight(1f)
-                    .height(80.dp),
-
-                shape =
-                    RoundedCornerShape(12.dp)
-            ) {
-
-                Text(
-                    "+1 Spikers",
-
-                    style =
-                        MaterialTheme.typography.titleMedium
-                )
-            }
-
-            Spacer(
-                modifier =
-                    Modifier.padding(8.dp)
-            )
-
-            Button(
-
-                onClick = {
-
-                    onTeamB()
-                },
-
-                modifier = Modifier
-                    .weight(1f)
-                    .height(80.dp),
-
-                shape =
-                    RoundedCornerShape(12.dp),
-
-                colors =
-                    ButtonDefaults.buttonColors(
-
-                        containerColor =
-                            MaterialTheme.colorScheme.secondary
-                    )
-            ) {
-
-                Text(
-
-                    "+1 Blockers",
-
-                    style =
-                        MaterialTheme.typography.titleMedium
-                )
-            }
-        }
-
-        Spacer(
-            modifier =
-                Modifier.height(32.dp)
-        )
-
-        Row(
-            modifier =
-                Modifier.fillMaxWidth(),
-
-            horizontalArrangement =
-                Arrangement.SpaceBetween
-        ) {
-
-            Button(
-
-                onClick = {},
-
-                modifier =
-                    Modifier.weight(1f),
-
-                shape =
-                    RoundedCornerShape(12.dp),
-
-                colors =
-                    ButtonDefaults.buttonColors(
-
-                        containerColor =
-                            MaterialTheme.colorScheme.surfaceVariant
-                    )
-            ) {
-
-                Text(
-                    "Timeout Spikers"
-                )
-            }
-
-            Spacer(
-                modifier =
-                    Modifier.padding(8.dp)
-            )
-
-            Button(
-
-                onClick = {},
-
-                modifier =
-                    Modifier.weight(1f),
-
-                shape =
-                    RoundedCornerShape(12.dp),
-
-                colors =
-                    ButtonDefaults.buttonColors(
-
-                        containerColor =
-                            MaterialTheme.colorScheme.surfaceVariant
-                    )
-            ) {
-
-                Text(
-                    "Timeout Blockers"
-                )
-            }
-        }
-
-        Spacer(
-            modifier =
-                Modifier.height(16.dp)
-        )
-
-        Button(
-
-            onClick = {
-
-                onEndSet()
-            },
-
-            modifier =
-                Modifier.fillMaxWidth(),
-
-            shape =
-                RoundedCornerShape(12.dp),
-
-            colors =
-                ButtonDefaults.buttonColors(
-
-                    containerColor =
-                        MaterialTheme.colorScheme.tertiary
-                )
-        ) {
-
-            Text(
-
-                "End Set",
-
-                fontWeight =
-                    FontWeight.Bold
-            )
-        }
+        Text(text)
     }
 }

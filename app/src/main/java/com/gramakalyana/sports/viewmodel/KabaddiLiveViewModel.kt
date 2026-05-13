@@ -74,4 +74,50 @@ class KabaddiLiveViewModel : ViewModel() {
                 }
             )
     }
+
+    fun finishMatch(
+        data: KabaddiLiveData
+    ) {
+
+        val winner =
+
+            when {
+
+                data.teamAScore >
+                        data.teamBScore ->
+                    data.teamAName
+
+                data.teamBScore >
+                        data.teamAScore ->
+                    data.teamBName
+
+                else ->
+                    "DRAW"
+            }
+
+        val resultText =
+
+            if (winner == "DRAW")
+                "Match Drawn"
+
+            else
+                "$winner won the match"
+
+        val updatedData =
+
+            data.copy(
+
+                winner = winner,
+
+                resultText = resultText,
+
+                matchCompleted = true,
+
+                matchStatus = "COMPLETED"
+            )
+
+        updateLiveMatch(
+            updatedData
+        )
+    }
 }

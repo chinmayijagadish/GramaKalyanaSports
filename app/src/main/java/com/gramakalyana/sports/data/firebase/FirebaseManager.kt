@@ -43,4 +43,9 @@ object FirebaseManager {
         database.getReference(
             "grama_kalyana_sports/volleyball_live"
         )
+
+    val playerStatsRef =
+        database.getReference(
+            "player_stats"
+        )
 }

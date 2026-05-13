@@ -169,9 +169,6 @@ fun AppNavGraph(
                     ?: ""
 
             PlayerStatsScreen(
-
-                navController = navController,
-
                 playerId = playerId
             )
         }

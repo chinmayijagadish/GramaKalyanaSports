@@ -1,6 +1,9 @@
 package com.gramakalyana.sports.ui.screens.live
 
+import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,10 +38,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.gramakalyana.sports.data.model.CricketLiveData
 import com.gramakalyana.sports.ui.components.GlassmorphismCard
 import com.gramakalyana.sports.viewmodel.CricketLiveViewModel
 
@@ -54,6 +59,9 @@ fun MatchDetailsScreen(
     val cricketViewModel:
             CricketLiveViewModel =
         viewModel()
+
+    val context =
+        LocalContext.current
 
     LaunchedEffect(Unit) {
 
@@ -125,8 +133,6 @@ fun MatchDetailsScreen(
 
             item {
 
-                // LIVE STATUS
-
                 Row(
                     verticalAlignment =
                         Alignment.CenterVertically
@@ -180,8 +186,6 @@ fun MatchDetailsScreen(
             }
 
             item {
-
-                // SCORE CARD
 
                 GlassmorphismCard(
                     modifier =
@@ -273,8 +277,6 @@ fun MatchDetailsScreen(
                             }
                         }
 
-                        // BATTERS
-
                         Card(
                             shape =
                                 RoundedCornerShape(14.dp),
@@ -350,8 +352,6 @@ fun MatchDetailsScreen(
                             }
                         }
 
-                        // BOWLER
-
                         Card(
                             shape =
                                 RoundedCornerShape(14.dp),
@@ -391,8 +391,6 @@ fun MatchDetailsScreen(
                             }
                         }
 
-                        // STATS
-
                         Row(
                             modifier =
                                 Modifier.fillMaxWidth(),
@@ -424,8 +422,6 @@ fun MatchDetailsScreen(
             }
 
             item {
-
-                // THIS OVER
 
                 GlassmorphismCard(
                     modifier =
@@ -489,8 +485,6 @@ fun MatchDetailsScreen(
 
                 item {
 
-                    // RESULT CARD
-
                     Card(
                         modifier =
                             Modifier.fillMaxWidth(),
@@ -548,13 +542,65 @@ fun MatchDetailsScreen(
                         }
                     }
                 }
+
+                item {
+
+                    Card(
+
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .clickable {
+
+                                    shareMatchResult(
+                                        context,
+                                        liveData
+                                    )
+                                },
+
+                        shape =
+                            RoundedCornerShape(18.dp),
+
+                        colors =
+                            CardDefaults.cardColors(
+
+                                containerColor =
+                                    MaterialTheme.colorScheme.primary
+                            )
+                    ) {
+
+                        Box(
+
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(18.dp),
+
+                            contentAlignment =
+                                Alignment.Center
+                        ) {
+
+                            Text(
+
+                                text =
+                                    "SHARE SCORECARD",
+
+                                color =
+                                    Color.White,
+
+                                fontWeight =
+                                    FontWeight.Bold
+                            )
+                        }
+                    }
+                }
             }
 
             item {
 
                 Spacer(
                     modifier =
-                        Modifier.height(100.dp)
+                        Modifier.height(24.dp)
                 )
             }
         }
@@ -665,4 +711,55 @@ fun BallIndicator(
                 FontWeight.Bold
         )
     }
+}
+
+fun shareMatchResult(
+
+    context: Context,
+
+    liveData: CricketLiveData
+) {
+
+    val shareText =
+
+        """
+🏏 Grama Kalyana Sports
+
+${liveData.battingTeamName}
+
+Score:
+${liveData.runs}/${liveData.wickets}
+
+Overs:
+${liveData.overs}/${liveData.maxOvers}
+
+Result:
+${liveData.resultText}
+
+Powered by Grama Kalyana Sports
+        """.trimIndent()
+
+    val sendIntent =
+        Intent().apply {
+
+            action =
+                Intent.ACTION_SEND
+
+            putExtra(
+                Intent.EXTRA_TEXT,
+                shareText
+            )
+
+            type = "text/plain"
+        }
+
+    val shareIntent =
+        Intent.createChooser(
+            sendIntent,
+            "Share Scorecard"
+        )
+
+    context.startActivity(
+        shareIntent
+    )
 }
