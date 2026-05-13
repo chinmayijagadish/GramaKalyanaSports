@@ -10,12 +10,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,6 +31,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -38,6 +40,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.gramakalyana.sports.ui.components.GlassmorphismCard
 import com.gramakalyana.sports.viewmodel.KabaddiLiveViewModel
+import com.gramakalyana.sports.viewmodel.MatchViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,10 +57,19 @@ fun KabaddiScoringScreen(
             KabaddiLiveViewModel =
         viewModel()
 
+    val matchViewModel:
+            MatchViewModel =
+        viewModel()
+
     LaunchedEffect(Unit) {
 
         kabaddiViewModel.observeLiveMatch(
             matchId
+        )
+
+        matchViewModel.updateMatchStatus(
+            matchId,
+            "LIVE"
         )
     }
 
@@ -72,23 +84,47 @@ fun KabaddiScoringScreen(
 
                 title = {
 
-                    Text(
-                        text = "Kabaddi Scoring",
-                        fontWeight = FontWeight.Bold
-                    )
+                    Row(
+                        verticalAlignment =
+                            Alignment.CenterVertically
+                    ) {
+
+                        Icon(
+                            imageVector =
+                                Icons.Default.PlayArrow,
+
+                            contentDescription = null
+                        )
+
+                        Spacer(
+                            modifier =
+                                Modifier.width(8.dp)
+                        )
+
+                        Text(
+
+                            text =
+                                "Kabaddi Scoring",
+
+                            fontWeight =
+                                FontWeight.Bold
+                        )
+                    }
                 },
 
                 navigationIcon = {
 
                     IconButton(
                         onClick = {
+
                             navController.popBackStack()
                         }
                     ) {
 
                         Icon(
                             imageVector =
-                                Icons.Default.ArrowBack,
+                                Icons.AutoMirrored.Filled.ArrowBack,
+
                             contentDescription = null
                         )
                     }
@@ -96,15 +132,338 @@ fun KabaddiScoringScreen(
 
                 colors =
                     TopAppBarDefaults.topAppBarColors(
+
                         containerColor =
                             MaterialTheme.colorScheme.background
                     )
             )
+        },
+
+        bottomBar = {
+
+            if (!liveData.matchCompleted) {
+
+                Column(
+
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(
+                            MaterialTheme.colorScheme.background
+                        )
+                        .padding(16.dp),
+
+                    verticalArrangement =
+                        Arrangement.spacedBy(12.dp)
+                ) {
+
+                    Row(
+                        modifier =
+                            Modifier.fillMaxWidth(),
+
+                        horizontalArrangement =
+                            Arrangement.spacedBy(12.dp)
+                    ) {
+
+                        KabaddiButton(
+
+                            text = "Raid +1",
+
+                            modifier =
+                                Modifier.weight(1f)
+
+                        ) {
+
+                            var updated =
+                                liveData
+
+                            if (
+                                updated.currentRaidingTeam == "A"
+                            ) {
+
+                                updated =
+                                    updated.copy(
+
+                                        teamAScore =
+                                            updated.teamAScore + 1,
+
+                                        touchPointsA =
+                                            updated.touchPointsA + 1,
+
+                                        currentRaidingTeam = "B",
+
+                                        recentRaids =
+                                            (
+                                                    updated.recentRaids +
+                                                            "${updated.teamAName} Raid +1"
+                                                    ).takeLast(12)
+                                    )
+                            }
+
+                            else {
+
+                                updated =
+                                    updated.copy(
+
+                                        teamBScore =
+                                            updated.teamBScore + 1,
+
+                                        touchPointsB =
+                                            updated.touchPointsB + 1,
+
+                                        currentRaidingTeam = "A",
+
+                                        recentRaids =
+                                            (
+                                                    updated.recentRaids +
+                                                            "${updated.teamBName} Raid +1"
+                                                    ).takeLast(12)
+                                    )
+                            }
+
+                            kabaddiViewModel
+                                .updateLiveMatch(updated)
+                        }
+
+                        KabaddiButton(
+
+                            text = "Tackle +1",
+
+                            modifier =
+                                Modifier.weight(1f)
+
+                        ) {
+
+                            var updated =
+                                liveData
+
+                            if (
+                                updated.currentRaidingTeam == "A"
+                            ) {
+
+                                updated =
+                                    updated.copy(
+
+                                        teamBScore =
+                                            updated.teamBScore + 1,
+
+                                        tacklePointsB =
+                                            updated.tacklePointsB + 1,
+
+                                        currentRaidingTeam = "B",
+
+                                        recentRaids =
+                                            (
+                                                    updated.recentRaids +
+                                                            "${updated.teamBName} Tackle +1"
+                                                    ).takeLast(12)
+                                    )
+                            }
+
+                            else {
+
+                                updated =
+                                    updated.copy(
+
+                                        teamAScore =
+                                            updated.teamAScore + 1,
+
+                                        tacklePointsA =
+                                            updated.tacklePointsA + 1,
+
+                                        currentRaidingTeam = "A",
+
+                                        recentRaids =
+                                            (
+                                                    updated.recentRaids +
+                                                            "${updated.teamAName} Tackle +1"
+                                                    ).takeLast(12)
+                                    )
+                            }
+
+                            kabaddiViewModel
+                                .updateLiveMatch(updated)
+                        }
+                    }
+
+                    Row(
+                        modifier =
+                            Modifier.fillMaxWidth(),
+
+                        horizontalArrangement =
+                            Arrangement.spacedBy(12.dp)
+                    ) {
+
+                        KabaddiButton(
+
+                            text = "Super Raid +3",
+
+                            modifier =
+                                Modifier.weight(1f)
+
+                        ) {
+
+                            var updated =
+                                liveData
+
+                            if (
+                                updated.currentRaidingTeam == "A"
+                            ) {
+
+                                updated =
+                                    updated.copy(
+
+                                        teamAScore =
+                                            updated.teamAScore + 3,
+
+                                        superRaid = true,
+
+                                        currentRaidingTeam = "B",
+
+                                        recentRaids =
+                                            (
+                                                    updated.recentRaids +
+                                                            "${updated.teamAName} Super Raid +3"
+                                                    ).takeLast(12)
+                                    )
+                            }
+
+                            else {
+
+                                updated =
+                                    updated.copy(
+
+                                        teamBScore =
+                                            updated.teamBScore + 3,
+
+                                        superRaid = true,
+
+                                        currentRaidingTeam = "A",
+
+                                        recentRaids =
+                                            (
+                                                    updated.recentRaids +
+                                                            "${updated.teamBName} Super Raid +3"
+                                                    ).takeLast(12)
+                                    )
+                            }
+
+                            kabaddiViewModel
+                                .updateLiveMatch(updated)
+                        }
+
+                        KabaddiButton(
+
+                            text = "Empty Raid",
+
+                            modifier =
+                                Modifier.weight(1f)
+
+                        ) {
+
+                            kabaddiViewModel
+                                .updateLiveMatch(
+
+                                    liveData.copy(
+
+                                        currentRaidingTeam =
+
+                                            if (
+                                                liveData.currentRaidingTeam == "A"
+                                            )
+                                                "B"
+
+                                            else
+                                                "A",
+
+                                        recentRaids =
+                                            (
+                                                    liveData.recentRaids +
+                                                            "Empty Raid"
+                                                    ).takeLast(12)
+                                    )
+                                )
+                        }
+                    }
+
+                    Row(
+                        modifier =
+                            Modifier.fillMaxWidth(),
+
+                        horizontalArrangement =
+                            Arrangement.spacedBy(12.dp)
+                    ) {
+
+                        if (liveData.currentHalf == 1) {
+
+                            KabaddiButton(
+
+                                text = "START 2ND HALF",
+
+                                modifier =
+                                    Modifier.weight(1f)
+
+                            ) {
+
+                                kabaddiViewModel
+                                    .updateLiveMatch(
+
+                                        liveData.copy(
+                                            currentHalf = 2
+                                        )
+                                    )
+                            }
+                        }
+
+                        else {
+
+                            KabaddiButton(
+
+                                text = "FINISH MATCH",
+
+                                modifier =
+                                    Modifier.weight(1f)
+
+                            ) {
+
+                                kabaddiViewModel
+                                    .finishMatch(liveData)
+
+                                val winner =
+
+                                    when {
+
+                                        liveData.teamAScore >
+                                                liveData.teamBScore ->
+
+                                            liveData.teamAName
+
+                                        liveData.teamBScore >
+                                                liveData.teamAScore ->
+
+                                            liveData.teamBName
+
+                                        else ->
+                                            "DRAW"
+                                    }
+
+                                matchViewModel
+                                    .finishMatch(
+
+                                        liveData.matchId,
+
+                                        winner
+                                    )
+                            }
+                        }
+                    }
+                }
+            }
         }
 
     ) { paddingValues ->
 
         LazyColumn(
+
             modifier = Modifier
                 .fillMaxSize()
                 .background(
@@ -119,6 +478,52 @@ fun KabaddiScoringScreen(
 
             item {
 
+                Card(
+
+                    modifier =
+                        Modifier.fillMaxWidth(),
+
+                    colors =
+                        CardDefaults.cardColors(
+
+                            containerColor =
+
+                                if (
+                                    liveData.matchCompleted
+                                )
+                                    Color.Gray
+
+                                else
+                                    Color(0xFFD32F2F)
+                        )
+                ) {
+
+                    Text(
+
+                        text =
+
+                            if (
+                                liveData.matchCompleted
+                            )
+                                "MATCH COMPLETED"
+
+                            else
+                                "LIVE • ${liveData.currentRaidingTeam} RAIDING",
+
+                        color =
+                            Color.White,
+
+                        modifier =
+                            Modifier.padding(14.dp),
+
+                        fontWeight =
+                            FontWeight.Bold
+                    )
+                }
+            }
+
+            item {
+
                 GlassmorphismCard(
                     modifier =
                         Modifier.fillMaxWidth()
@@ -126,37 +531,63 @@ fun KabaddiScoringScreen(
 
                     Column(
                         modifier =
-                            Modifier.padding(20.dp),
-
-                        verticalArrangement =
-                            Arrangement.spacedBy(12.dp)
+                            Modifier.padding(20.dp)
                     ) {
 
                         Text(
 
                             text =
-                                "${liveData.teamAName} ${liveData.teamAScore} - ${liveData.teamBScore} ${liveData.teamBName}",
+                                if (liveData.currentHalf == 1)
+                                    "FIRST HALF"
+
+                                else
+                                    "SECOND HALF",
 
                             style =
-                                MaterialTheme.typography.headlineSmall,
+                                MaterialTheme.typography.titleLarge,
 
                             fontWeight =
                                 FontWeight.ExtraBold
                         )
 
-                        Text(
-                            text =
-                                "Half: ${liveData.currentHalf}"
+                        Spacer(
+                            modifier =
+                                Modifier.height(18.dp)
                         )
 
-                        Text(
-                            text =
-                                "Raid Team: ${liveData.currentRaidingTeam}"
+                        TeamKabaddiCard(
+
+                            teamName =
+                                liveData.teamAName,
+
+                            score =
+                                liveData.teamAScore,
+
+                            touchPoints =
+                                liveData.touchPointsA,
+
+                            tacklePoints =
+                                liveData.tacklePointsA
                         )
 
-                        Text(
-                            text =
-                                "Players On Mat: ${liveData.teamAPlayersOnMat} - ${liveData.teamBPlayersOnMat}"
+                        Spacer(
+                            modifier =
+                                Modifier.height(14.dp)
+                        )
+
+                        TeamKabaddiCard(
+
+                            teamName =
+                                liveData.teamBName,
+
+                            score =
+                                liveData.teamBScore,
+
+                            touchPoints =
+                                liveData.touchPointsB,
+
+                            tacklePoints =
+                                liveData.tacklePointsB
                         )
                     }
                 }
@@ -164,370 +595,71 @@ fun KabaddiScoringScreen(
 
             item {
 
-                Text(
-                    text = "Raid History",
-                    fontWeight = FontWeight.Bold
-                )
-
-                Spacer(
+                GlassmorphismCard(
                     modifier =
-                        Modifier.height(8.dp)
-                )
-
-                FlowRow(
-
-                    horizontalArrangement =
-                        Arrangement.spacedBy(8.dp),
-
-                    verticalArrangement =
-                        Arrangement.spacedBy(8.dp)
+                        Modifier.fillMaxWidth()
                 ) {
 
-                    liveData.recentRaids.forEach {
+                    Column(
+                        modifier =
+                            Modifier.padding(18.dp)
+                    ) {
 
-                        Card(
+                        Text(
 
-                            colors =
-                                CardDefaults.cardColors(
+                            text =
+                                "Recent Raids",
 
-                                    containerColor =
-                                        MaterialTheme.colorScheme.primaryContainer
-                                )
+                            fontWeight =
+                                FontWeight.Bold
+                        )
+
+                        Spacer(
+                            modifier =
+                                Modifier.height(12.dp)
+                        )
+
+                        FlowRow(
+
+                            horizontalArrangement =
+                                Arrangement.spacedBy(8.dp),
+
+                            verticalArrangement =
+                                Arrangement.spacedBy(8.dp)
                         ) {
 
-                            Text(
+                            liveData.recentRaids.forEach {
 
-                                text = it,
+                                Card(
 
-                                modifier =
-                                    Modifier.padding(
-                                        horizontal = 14.dp,
-                                        vertical = 10.dp
+                                    colors =
+                                        CardDefaults.cardColors(
+
+                                            containerColor =
+                                                MaterialTheme.colorScheme.primaryContainer
+                                        )
+                                ) {
+
+                                    Text(
+
+                                        text = it,
+
+                                        modifier =
+                                            Modifier.padding(
+                                                horizontal = 14.dp,
+                                                vertical = 10.dp
+                                            )
                                     )
-                            )
+                                }
+                            }
                         }
                     }
                 }
             }
 
-            item {
-
-                Text(
-                    text = "Team A Controls",
-                    fontWeight = FontWeight.Bold
-                )
-            }
-
-            item {
-
-                Row(
-                    horizontalArrangement =
-                        Arrangement.spacedBy(10.dp)
-                ) {
-
-                    KabaddiButton(
-                        text = "Touch +1"
-                    ) {
-
-                        val updated =
-
-                            liveData.copy(
-
-                                teamAScore =
-                                    liveData.teamAScore + 1,
-
-                                touchPointsA =
-                                    liveData.touchPointsA + 1,
-
-                                teamBPlayersOnMat =
-                                    maxOf(
-                                        0,
-                                        liveData.teamBPlayersOnMat - 1
-                                    ),
-
-                                recentRaids =
-                                    (
-                                            liveData.recentRaids +
-                                                    "A Touch +1"
-                                            ).takeLast(10)
-                            )
-
-                        kabaddiViewModel
-                            .updateLiveMatch(updated)
-                    }
-
-                    KabaddiButton(
-                        text = "Bonus +1"
-                    ) {
-
-                        val updated =
-
-                            liveData.copy(
-
-                                teamAScore =
-                                    liveData.teamAScore + 1,
-
-                                bonusPointsA =
-                                    liveData.bonusPointsA + 1,
-
-                                recentRaids =
-                                    (
-                                            liveData.recentRaids +
-                                                    "A Bonus +1"
-                                            ).takeLast(10)
-                            )
-
-                        kabaddiViewModel
-                            .updateLiveMatch(updated)
-                    }
-                }
-            }
-
-            item {
-
-                Row(
-                    horizontalArrangement =
-                        Arrangement.spacedBy(10.dp)
-                ) {
-
-                    KabaddiButton(
-                        text = "Super Raid +3"
-                    ) {
-
-                        val updated =
-
-                            liveData.copy(
-
-                                teamAScore =
-                                    liveData.teamAScore + 3,
-
-                                superRaid = true,
-
-                                teamBPlayersOnMat =
-                                    maxOf(
-                                        0,
-                                        liveData.teamBPlayersOnMat - 3
-                                    ),
-
-                                recentRaids =
-                                    (
-                                            liveData.recentRaids +
-                                                    "A Super Raid +3"
-                                            ).takeLast(10)
-                            )
-
-                        kabaddiViewModel
-                            .updateLiveMatch(updated)
-                    }
-
-                    KabaddiButton(
-                        text = "All Out +2"
-                    ) {
-
-                        val updated =
-
-                            liveData.copy(
-
-                                teamAScore =
-                                    liveData.teamAScore + 2,
-
-                                allOutCountA =
-                                    liveData.allOutCountA + 1,
-
-                                teamBPlayersOnMat = 7,
-
-                                recentRaids =
-                                    (
-                                            liveData.recentRaids +
-                                                    "A All Out +2"
-                                            ).takeLast(10)
-                            )
-
-                        kabaddiViewModel
-                            .updateLiveMatch(updated)
-                    }
-                }
-            }
-
-            item {
-
-                Text(
-                    text = "Team B Controls",
-                    fontWeight = FontWeight.Bold
-                )
-            }
-
-            item {
-
-                Row(
-                    horizontalArrangement =
-                        Arrangement.spacedBy(10.dp)
-                ) {
-
-                    KabaddiButton(
-                        text = "Touch +1"
-                    ) {
-
-                        val updated =
-
-                            liveData.copy(
-
-                                teamBScore =
-                                    liveData.teamBScore + 1,
-
-                                touchPointsB =
-                                    liveData.touchPointsB + 1,
-
-                                teamAPlayersOnMat =
-                                    maxOf(
-                                        0,
-                                        liveData.teamAPlayersOnMat - 1
-                                    ),
-
-                                recentRaids =
-                                    (
-                                            liveData.recentRaids +
-                                                    "B Touch +1"
-                                            ).takeLast(10)
-                            )
-
-                        kabaddiViewModel
-                            .updateLiveMatch(updated)
-                    }
-
-                    KabaddiButton(
-                        text = "Bonus +1"
-                    ) {
-
-                        val updated =
-
-                            liveData.copy(
-
-                                teamBScore =
-                                    liveData.teamBScore + 1,
-
-                                bonusPointsB =
-                                    liveData.bonusPointsB + 1,
-
-                                recentRaids =
-                                    (
-                                            liveData.recentRaids +
-                                                    "B Bonus +1"
-                                            ).takeLast(10)
-                            )
-
-                        kabaddiViewModel
-                            .updateLiveMatch(updated)
-                    }
-                }
-            }
-
-            item {
-
-                Row(
-                    horizontalArrangement =
-                        Arrangement.spacedBy(10.dp)
-                ) {
-
-                    KabaddiButton(
-                        text = "Super Raid +3"
-                    ) {
-
-                        val updated =
-
-                            liveData.copy(
-
-                                teamBScore =
-                                    liveData.teamBScore + 3,
-
-                                superRaid = true,
-
-                                teamAPlayersOnMat =
-                                    maxOf(
-                                        0,
-                                        liveData.teamAPlayersOnMat - 3
-                                    ),
-
-                                recentRaids =
-                                    (
-                                            liveData.recentRaids +
-                                                    "B Super Raid +3"
-                                            ).takeLast(10)
-                            )
-
-                        kabaddiViewModel
-                            .updateLiveMatch(updated)
-                    }
-
-                    KabaddiButton(
-                        text = "All Out +2"
-                    ) {
-
-                        val updated =
-
-                            liveData.copy(
-
-                                teamBScore =
-                                    liveData.teamBScore + 2,
-
-                                allOutCountB =
-                                    liveData.allOutCountB + 1,
-
-                                teamAPlayersOnMat = 7,
-
-                                recentRaids =
-                                    (
-                                            liveData.recentRaids +
-                                                    "B All Out +2"
-                                            ).takeLast(10)
-                            )
-
-                        kabaddiViewModel
-                            .updateLiveMatch(updated)
-                    }
-                }
-            }
-
-            item {
-
-                Spacer(
-                    modifier =
-                        Modifier.height(10.dp)
-                )
-
-                Button(
-
-                    onClick = {
-
-                        kabaddiViewModel
-                            .finishMatch(liveData)
-                    },
-
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .height(56.dp),
-
-                    shape =
-                        RoundedCornerShape(14.dp),
-
-                    colors =
-                        ButtonDefaults.buttonColors(
-
-                            containerColor =
-                                MaterialTheme.colorScheme.primary
-                        )
-                ) {
-
-                    Text(
-                        text = "FINISH MATCH",
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-            }
-
-            if (liveData.matchCompleted) {
+            if (
+                liveData.matchCompleted
+            ) {
 
                 item {
 
@@ -549,13 +681,16 @@ fun KabaddiScoringScreen(
 
                         Column(
                             modifier =
-                                Modifier.padding(20.dp)
+                                Modifier.padding(20.dp),
+
+                            horizontalAlignment =
+                                Alignment.CenterHorizontally
                         ) {
 
                             Text(
 
                                 text =
-                                    "RESULT",
+                                    "MATCH RESULT",
 
                                 color =
                                     Color.White,
@@ -592,7 +727,7 @@ fun KabaddiScoringScreen(
 
                 Spacer(
                     modifier =
-                        Modifier.height(100.dp)
+                        Modifier.height(150.dp)
                 )
             }
         }
@@ -600,8 +735,80 @@ fun KabaddiScoringScreen(
 }
 
 @Composable
+fun TeamKabaddiCard(
+
+    teamName: String,
+
+    score: Int,
+
+    touchPoints: Int,
+
+    tacklePoints: Int
+) {
+
+    Card {
+
+        Column(
+            modifier =
+                Modifier.padding(16.dp)
+        ) {
+
+            Row(
+                modifier =
+                    Modifier.fillMaxWidth(),
+
+                horizontalArrangement =
+                    Arrangement.SpaceBetween
+            ) {
+
+                Text(
+
+                    text =
+                        teamName,
+
+                    fontWeight =
+                        FontWeight.Bold
+                )
+
+                Text(
+
+                    text =
+                        score.toString(),
+
+                    style =
+                        MaterialTheme.typography.displaySmall,
+
+                    fontWeight =
+                        FontWeight.ExtraBold
+                )
+            }
+
+            Spacer(
+                modifier =
+                    Modifier.height(10.dp)
+            )
+
+            Text(
+                text =
+                    "Raid Points: $touchPoints"
+            )
+
+            Text(
+                text =
+                    "Tackle Points: $tacklePoints"
+            )
+        }
+    }
+}
+
+@Composable
 fun KabaddiButton(
+
     text: String,
+
+    modifier: Modifier =
+        Modifier,
+
     onClick: () -> Unit
 ) {
 
@@ -610,12 +817,18 @@ fun KabaddiButton(
         onClick = onClick,
 
         modifier =
-            Modifier.fillMaxWidth(),
+            modifier.height(58.dp),
 
         shape =
-            RoundedCornerShape(12.dp)
+            RoundedCornerShape(14.dp)
     ) {
 
-        Text(text)
+        Text(
+
+            text = text,
+
+            fontWeight =
+                FontWeight.Bold
+        )
     }
 }

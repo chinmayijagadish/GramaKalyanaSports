@@ -9,12 +9,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -37,6 +41,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -64,10 +69,12 @@ fun TournamentDashboardScreen(
     zone: String
 ) {
 
-    val teamViewModel: TeamViewModel =
+    val teamViewModel:
+            TeamViewModel =
         viewModel()
 
-    val matchViewModel: MatchViewModel =
+    val matchViewModel:
+            MatchViewModel =
         viewModel()
 
     val cricketLiveViewModel:
@@ -117,23 +124,30 @@ fun TournamentDashboardScreen(
                 title = {
 
                     Text(
-                        text = "Tournament Dashboard",
 
-                        fontWeight = FontWeight.Bold
+                        text =
+                            tournamentName,
+
+                        fontWeight =
+                            FontWeight.Bold
                     )
                 },
 
-                colors = TopAppBarDefaults.topAppBarColors(
+                colors =
+                    TopAppBarDefaults.topAppBarColors(
 
-                    containerColor =
-                        MaterialTheme.colorScheme.background
-                )
+                        containerColor =
+                            MaterialTheme.colorScheme.background
+                    )
             )
         }
 
     ) { paddingValues ->
 
-        if (showDeleteDialog && selectedTeam != null) {
+        if (
+            showDeleteDialog &&
+            selectedTeam != null
+        ) {
 
             AlertDialog(
 
@@ -188,7 +202,10 @@ fun TournamentDashboardScreen(
             )
         }
 
-        if (showEditDialog && selectedTeam != null) {
+        if (
+            showEditDialog &&
+            selectedTeam != null
+        ) {
 
             AlertDialog(
 
@@ -205,13 +222,17 @@ fun TournamentDashboardScreen(
                 text = {
 
                     OutlinedTextField(
-                        value = editedTeamName,
+
+                        value =
+                            editedTeamName,
 
                         onValueChange = {
+
                             editedTeamName = it
                         },
 
                         label = {
+
                             Text("Team Name")
                         }
                     )
@@ -260,6 +281,7 @@ fun TournamentDashboardScreen(
         }
 
         LazyColumn(
+
             modifier = Modifier
                 .fillMaxSize()
                 .background(
@@ -269,181 +291,42 @@ fun TournamentDashboardScreen(
                 .padding(16.dp),
 
             verticalArrangement =
-                Arrangement.spacedBy(20.dp)
+                Arrangement.spacedBy(22.dp)
         ) {
 
             item {
 
                 Card(
-                    modifier = Modifier.fillMaxWidth(),
 
-                    shape = RoundedCornerShape(20.dp),
+                    modifier =
+                        Modifier.fillMaxWidth(),
 
-                    colors = CardDefaults.cardColors(
-                        containerColor =
-                            MaterialTheme.colorScheme.primaryContainer
-                    )
+                    shape =
+                        RoundedCornerShape(24.dp),
+
+                    colors =
+                        CardDefaults.cardColors(
+
+                            containerColor =
+                                MaterialTheme.colorScheme.primaryContainer
+                        )
                 ) {
 
                     Column(
-                        modifier = Modifier.padding(20.dp)
+                        modifier =
+                            Modifier.padding(22.dp)
                     ) {
 
                         Text(
-                            text = tournamentName,
+
+                            text =
+                                tournamentName,
 
                             style =
                                 MaterialTheme.typography.headlineSmall,
 
-                            fontWeight = FontWeight.Bold
-                        )
-
-                        Spacer(modifier = Modifier.height(10.dp))
-
-                        Text(
-                            text = "Sport: $sport"
-                        )
-
-                        Text(
-                            text = "Zone: $zone"
-                        )
-                    }
-                }
-            }
-
-            item {
-
-                Button(
-
-                    onClick = {
-
-                        navController.navigate(
-
-                            Screen.AddTeam.createRoute(
-
-                                tournamentId,
-
-                                sport,
-
-                                zone
-                            )
-                        )
-                    },
-
-                    modifier = Modifier.fillMaxWidth(),
-
-                    shape = RoundedCornerShape(14.dp)
-                ) {
-
-                    Text(
-                        text = "ADD TEAM"
-                    )
-                }
-            }
-
-            item {
-
-                Button(
-
-                    onClick = {
-
-                        navController.navigate(
-
-                            Screen.CreateMatch.createRoute(
-
-                                tournamentId,
-
-                                sport,
-
-                                zone
-                            )
-                        )
-                    },
-
-                    modifier = Modifier.fillMaxWidth(),
-
-                    shape = RoundedCornerShape(14.dp),
-
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor =
-                            MaterialTheme.colorScheme.primary
-                    )
-                ) {
-
-                    Text(
-                        text = "CREATE MATCH"
-                    )
-                }
-            }
-
-            item {
-
-                Text(
-                    text = "Scheduled Matches",
-
-                    style =
-                        MaterialTheme.typography.titleLarge,
-
-                    fontWeight = FontWeight.Bold
-                )
-            }
-
-            if (matches.isEmpty()) {
-
-                item {
-
-                    Text(
-                        text =
-                            "No matches scheduled yet."
-                    )
-                }
-            }
-
-            items(matches) { match ->
-
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-
-                    shape = RoundedCornerShape(18.dp)
-                ) {
-
-                    Column(
-                        modifier = Modifier.padding(18.dp)
-                    ) {
-
-                        Text(
-                            text =
-                                "${match.teamAName} vs ${match.teamBName}",
-
-                            style =
-                                MaterialTheme.typography.titleMedium,
-
-                            fontWeight = FontWeight.Bold
-                        )
-
-                        Spacer(
-                            modifier =
-                                Modifier.height(8.dp)
-                        )
-
-                        Text(
-                            text =
-                                "Date: ${match.matchDate}"
-                        )
-
-                        Text(
-                            text =
-                                "Time: ${match.matchTime}"
-                        )
-
-                        Text(
-                            text =
-                                "Venue: ${match.venue}"
-                        )
-
-                        Text(
-                            text =
-                                "Status: ${match.status}"
+                            fontWeight =
+                                FontWeight.ExtraBold
                         )
 
                         Spacer(
@@ -451,119 +334,25 @@ fun TournamentDashboardScreen(
                                 Modifier.height(12.dp)
                         )
 
-                        Button(
+                        Text(
+                            text =
+                                "🏆 Sport: $sport"
+                        )
 
-                            onClick = {
+                        Text(
+                            text =
+                                "📍 Zone: $zone"
+                        )
 
-                                if (match.status == "COMPLETED") {
+                        Text(
+                            text =
+                                "👥 Teams: ${teams.size}"
+                        )
 
-                                    navController.navigate(
-
-                                        Screen.MatchDetails
-                                            .createRoute(
-                                                match.matchId
-                                            )
-                                    )
-
-                                    return@Button
-                                }
-
-                                if (match.sportType == "Cricket") {
-
-                                    val cricketLiveData = CricketLiveData(
-
-                                        matchId =
-                                            match.matchId,
-
-                                        battingTeamId =
-                                            match.teamAId,
-
-                                        bowlingTeamId =
-                                            match.teamBId,
-
-                                        battingTeamName =
-                                            match.teamAName,
-
-                                        bowlingTeamName =
-                                            match.teamBName,
-
-                                        strikerName =
-                                            "Striker",
-
-                                        nonStrikerName =
-                                            "Non-Striker",
-
-                                        bowlerName =
-                                            "Bowler",
-
-                                        matchStatus =
-                                            "LIVE"
-                                    )
-
-                                    cricketLiveViewModel
-                                        .createLiveMatch(
-                                            cricketLiveData
-                                        )
-
-                                    matchViewModel.updateMatch(
-
-                                        match.copy(
-                                            status = "LIVE"
-                                        )
-                                    )
-
-                                    navController.navigate(
-
-                                        Screen
-                                            .LiveScoringCricket
-                                            .createRoute(
-                                                match.matchId
-                                            )
-                                    )
-                                }
-
-                                else if (
-                                    match.sportType ==
-                                    "Kabaddi"
-                                ) {
-
-                                    navController.navigate(
-
-                                        Screen
-                                            .LiveScoringKabaddi
-                                            .createRoute(
-                                                match.matchId
-                                            )
-                                    )
-                                }
-
-                                else if (
-                                    match.sportType ==
-                                    "Volleyball"
-                                ) {
-
-                                    navController.navigate(
-
-                                        Screen
-                                            .LiveScoringVolleyball
-                                            .createRoute(
-                                                match.matchId
-                                            )
-                                    )
-                                }
-                            },
-
-                            modifier =
-                                Modifier.fillMaxWidth(),
-
-                            shape =
-                                RoundedCornerShape(12.dp)
-                        ) {
-
-                            Text(
-                                text = "START LIVE SCORE"
-                            )
-                        }
+                        Text(
+                            text =
+                                "🎮 Matches: ${matches.size}"
+                        )
                     }
                 }
             }
@@ -571,27 +360,124 @@ fun TournamentDashboardScreen(
             item {
 
                 Text(
-                    text = "Added Teams",
+
+                    text =
+                        "Quick Actions",
 
                     style =
                         MaterialTheme.typography.titleLarge,
 
-                    fontWeight = FontWeight.Bold
+                    fontWeight =
+                        FontWeight.Bold
                 )
             }
 
-            if (allTeams.isEmpty()) {
+            item {
 
-                item {
+                Row(
+                    horizontalArrangement =
+                        Arrangement.spacedBy(14.dp)
+                ) {
 
-                    Text(
-                        text =
-                            "Loading teams..."
-                    )
+                    Button(
+
+                        onClick = {
+
+                            navController.navigate(
+
+                                Screen.AddTeam.createRoute(
+
+                                    tournamentId,
+                                    sport,
+                                    zone
+                                )
+                            )
+                        },
+
+                        modifier =
+                            Modifier.weight(1f),
+
+                        shape =
+                            RoundedCornerShape(16.dp)
+                    ) {
+
+                        Icon(
+                            imageVector =
+                                Icons.Default.Add,
+
+                            contentDescription = null
+                        )
+
+                        Spacer(
+                            modifier =
+                                Modifier.width(6.dp)
+                        )
+
+                        Text("Add Team")
+                    }
+
+                    Button(
+
+                        onClick = {
+
+                            navController.navigate(
+
+                                Screen.CreateMatch.createRoute(
+
+                                    tournamentId,
+                                    sport,
+                                    zone
+                                )
+                            )
+                        },
+
+                        modifier =
+                            Modifier.weight(1f),
+
+                        shape =
+                            RoundedCornerShape(16.dp),
+
+                        colors =
+                            ButtonDefaults.buttonColors(
+
+                                containerColor =
+                                    MaterialTheme.colorScheme.primary
+                            )
+                    ) {
+
+                        Icon(
+                            imageVector =
+                                Icons.Default.PlayArrow,
+
+                            contentDescription = null
+                        )
+
+                        Spacer(
+                            modifier =
+                                Modifier.width(6.dp)
+                        )
+
+                        Text("Create Match")
+                    }
                 }
             }
 
-            else if (teams.isEmpty()) {
+            item {
+
+                Text(
+
+                    text =
+                        "Teams",
+
+                    style =
+                        MaterialTheme.typography.titleLarge,
+
+                    fontWeight =
+                        FontWeight.Bold
+                )
+            }
+
+            if (teams.isEmpty()) {
 
                 item {
 
@@ -605,37 +491,109 @@ fun TournamentDashboardScreen(
             items(teams) { team ->
 
                 Card(
-                    modifier = Modifier.fillMaxWidth(),
 
-                    shape = RoundedCornerShape(18.dp)
+                    modifier =
+                        Modifier.fillMaxWidth(),
+
+                    shape =
+                        RoundedCornerShape(20.dp)
                 ) {
 
                     Column(
-                        modifier = Modifier.padding(18.dp)
+                        modifier =
+                            Modifier.padding(18.dp)
                     ) {
 
-                        Text(
-                            text = team.teamName,
+                        Row(
 
-                            style =
-                                MaterialTheme.typography.titleMedium,
+                            modifier =
+                                Modifier.fillMaxWidth(),
 
-                            fontWeight = FontWeight.Bold
-                        )
+                            horizontalArrangement =
+                                Arrangement.SpaceBetween,
+
+                            verticalAlignment =
+                                Alignment.CenterVertically
+                        ) {
+
+                            Column(
+                                modifier =
+                                    Modifier.weight(1f)
+                            ) {
+
+                                Text(
+
+                                    text =
+                                        team.teamName,
+
+                                    style =
+                                        MaterialTheme.typography.titleMedium,
+
+                                    fontWeight =
+                                        FontWeight.Bold
+                                )
+
+                                Spacer(
+                                    modifier =
+                                        Modifier.height(6.dp)
+                                )
+
+                                Text(
+                                    text =
+                                        "Players: ${team.playerCount}"
+                                )
+                            }
+
+                            Row {
+
+                                IconButton(
+
+                                    onClick = {
+
+                                        selectedTeam = team
+
+                                        editedTeamName =
+                                            team.teamName
+
+                                        showEditDialog = true
+                                    }
+                                ) {
+
+                                    Icon(
+
+                                        imageVector =
+                                            Icons.Default.Edit,
+
+                                        contentDescription =
+                                            "Edit"
+                                    )
+                                }
+
+                                IconButton(
+
+                                    onClick = {
+
+                                        selectedTeam = team
+
+                                        showDeleteDialog = true
+                                    }
+                                ) {
+
+                                    Icon(
+
+                                        imageVector =
+                                            Icons.Default.Delete,
+
+                                        contentDescription =
+                                            "Delete"
+                                    )
+                                }
+                            }
+                        }
 
                         Spacer(
                             modifier =
-                                Modifier.height(6.dp)
-                        )
-
-                        Text(
-                            text =
-                                "Players: ${team.playerCount}"
-                        )
-
-                        Spacer(
-                            modifier =
-                                Modifier.height(12.dp)
+                                Modifier.height(14.dp)
                         )
 
                         Button(
@@ -659,11 +617,106 @@ fun TournamentDashboardScreen(
                                 Modifier.fillMaxWidth(),
 
                             shape =
-                                RoundedCornerShape(12.dp)
+                                RoundedCornerShape(14.dp)
+                        ) {
+
+                            Icon(
+                                imageVector =
+                                    Icons.Default.Person,
+
+                                contentDescription = null
+                            )
+
+                            Spacer(
+                                modifier =
+                                    Modifier.width(6.dp)
+                            )
+
+                            Text("Manage Players")
+                        }
+                    }
+                }
+            }
+
+            item {
+
+                Text(
+
+                    text =
+                        "Matches",
+
+                    style =
+                        MaterialTheme.typography.titleLarge,
+
+                    fontWeight =
+                        FontWeight.Bold
+                )
+            }
+
+            if (matches.isEmpty()) {
+
+                item {
+
+                    Text(
+                        text =
+                            "No matches scheduled yet."
+                    )
+                }
+            }
+
+            items(matches) { match ->
+
+                Card(
+
+                    modifier =
+                        Modifier.fillMaxWidth(),
+
+                    shape =
+                        RoundedCornerShape(20.dp)
+                ) {
+
+                    Column(
+                        modifier =
+                            Modifier.padding(18.dp)
+                    ) {
+
+                        Row(
+                            verticalAlignment =
+                                Alignment.CenterVertically
                         ) {
 
                             Text(
-                                text = "MANAGE PLAYERS"
+
+                                text =
+
+                                    when (match.sportType) {
+
+                                        "Cricket" -> "🏏"
+
+                                        "Kabaddi" -> "🤼"
+
+                                        else -> "🏐"
+                                    },
+
+                                style =
+                                    MaterialTheme.typography.titleLarge
+                            )
+
+                            Spacer(
+                                modifier =
+                                    Modifier.width(8.dp)
+                            )
+
+                            Text(
+
+                                text =
+                                    "${match.teamAName} vs ${match.teamBName}",
+
+                                style =
+                                    MaterialTheme.typography.titleMedium,
+
+                                fontWeight =
+                                    FontWeight.ExtraBold
                             )
                         }
 
@@ -672,28 +725,176 @@ fun TournamentDashboardScreen(
                                 Modifier.height(10.dp)
                         )
 
-                        Row {
+                        Text(
+                            text =
+                                "📅 ${match.matchDate}"
+                        )
 
-                            IconButton(
+                        Text(
+                            text =
+                                "⏰ ${match.matchTime}"
+                        )
+
+                        Text(
+                            text =
+                                "📍 ${match.venue}"
+                        )
+
+                        Spacer(
+                            modifier =
+                                Modifier.height(10.dp)
+                        )
+
+                        Text(
+
+                            text =
+                                "Status: ${match.status}",
+
+                            color =
+                                MaterialTheme.colorScheme.primary,
+
+                            fontWeight =
+                                FontWeight.Bold
+                        )
+
+                        Spacer(
+                            modifier =
+                                Modifier.height(16.dp)
+                        )
+
+                        Row(
+                            horizontalArrangement =
+                                Arrangement.spacedBy(12.dp)
+                        ) {
+
+                            Button(
 
                                 onClick = {
 
-                                    selectedTeam = team
+                                    if (
+                                        match.status ==
+                                        "COMPLETED"
+                                    ) {
 
-                                    editedTeamName =
-                                        team.teamName
+                                        navController.navigate(
 
-                                    showEditDialog = true
-                                }
+                                            Screen.MatchDetails
+                                                .createRoute(
+                                                    match.matchId
+                                                )
+                                        )
+
+                                        return@Button
+                                    }
+
+                                    if (
+                                        match.sportType ==
+                                        "Cricket"
+                                    ) {
+
+                                        val cricketLiveData =
+
+                                            CricketLiveData(
+
+                                                matchId =
+                                                    match.matchId,
+
+                                                battingTeamId =
+                                                    match.teamAId,
+
+                                                bowlingTeamId =
+                                                    match.teamBId,
+
+                                                battingTeamName =
+                                                    match.teamAName,
+
+                                                bowlingTeamName =
+                                                    match.teamBName,
+
+                                                strikerName =
+                                                    "Striker",
+
+                                                nonStrikerName =
+                                                    "Non-Striker",
+
+                                                bowlerName =
+                                                    "Bowler",
+
+                                                matchStatus =
+                                                    "LIVE"
+                                            )
+
+                                        cricketLiveViewModel
+                                            .createLiveMatch(
+                                                cricketLiveData
+                                            )
+
+                                        matchViewModel.updateMatch(
+
+                                            match.copy(
+                                                status = "LIVE"
+                                            )
+                                        )
+
+                                        navController.navigate(
+
+                                            Screen
+                                                .LiveScoringCricket
+                                                .createRoute(
+                                                    match.matchId
+                                                )
+                                        )
+                                    }
+
+                                    else if (
+                                        match.sportType ==
+                                        "Kabaddi"
+                                    ) {
+
+                                        navController.navigate(
+
+                                            Screen
+                                                .LiveScoringKabaddi
+                                                .createRoute(
+                                                    match.matchId
+                                                )
+                                        )
+                                    }
+
+                                    else {
+
+                                        navController.navigate(
+
+                                            Screen
+                                                .LiveScoringVolleyball
+                                                .createRoute(
+                                                    match.matchId
+                                                )
+                                        )
+                                    }
+                                },
+
+                                modifier =
+                                    Modifier.weight(1f),
+
+                                enabled =
+                                    match.status != "COMPLETED",
+
+                                shape =
+                                    RoundedCornerShape(14.dp)
                             ) {
 
-                                Icon(
+                                Text(
 
-                                    imageVector =
-                                        Icons.Default.Edit,
+                                    text =
+                                        if (
+                                            match.status ==
+                                            "COMPLETED"
+                                        )
+                                            "Completed"
 
-                                    contentDescription =
-                                        "Edit"
+                                        else
+                                            "Start"
                                 )
                             }
 
@@ -701,9 +902,9 @@ fun TournamentDashboardScreen(
 
                                 onClick = {
 
-                                    selectedTeam = team
-
-                                    showDeleteDialog = true
+                                    matchViewModel.deleteMatch(
+                                        match.matchId
+                                    )
                                 }
                             ) {
 
@@ -713,7 +914,7 @@ fun TournamentDashboardScreen(
                                         Icons.Default.Delete,
 
                                     contentDescription =
-                                        "Delete"
+                                        "Delete Match"
                                 )
                             }
                         }
@@ -724,6 +925,14 @@ fun TournamentDashboardScreen(
             item {
 
                 HorizontalDivider()
+            }
+
+            item {
+
+                Spacer(
+                    modifier =
+                        Modifier.height(90.dp)
+                )
             }
         }
     }

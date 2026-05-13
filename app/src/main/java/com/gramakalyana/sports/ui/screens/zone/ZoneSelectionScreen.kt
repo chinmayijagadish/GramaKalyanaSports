@@ -53,10 +53,14 @@ fun ZoneSelectionScreen(
     }
 
     var selectedZone by remember {
-        mutableStateOf("")
+        mutableStateOf(
+            SelectedZone.selectedZone
+        )
     }
 
     val zones = listOf(
+
+        "ALL",
 
         "North Zone",
         "South Zone",
@@ -92,22 +96,26 @@ fun ZoneSelectionScreen(
 
                     IconButton(
                         onClick = {
+
                             navController.popBackStack()
                         }
                     ) {
 
                         Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Back"
+                            imageVector =
+                                Icons.Default.ArrowBack,
+
+                            contentDescription = null
                         )
                     }
                 },
 
-                colors = TopAppBarDefaults.topAppBarColors(
+                colors =
+                    TopAppBarDefaults.topAppBarColors(
 
-                    containerColor =
-                        MaterialTheme.colorScheme.background
-                )
+                        containerColor =
+                            MaterialTheme.colorScheme.background
+                    )
             )
         }
 
@@ -138,6 +146,7 @@ fun ZoneSelectionScreen(
                     Modifier.fillMaxWidth(),
 
                 placeholder = {
+
                     Text("Search zones...")
                 },
 
@@ -146,6 +155,7 @@ fun ZoneSelectionScreen(
                     Icon(
                         imageVector =
                             Icons.Default.Search,
+
                         contentDescription = null
                     )
                 },
@@ -219,12 +229,16 @@ fun ZoneCard(
 ) {
 
     val borderColor =
+
         if (isSelected)
+
             MaterialTheme.colorScheme.primary
+
         else
             Color.Transparent
 
     val backgroundColor =
+
         if (isSelected)
 
             MaterialTheme.colorScheme.primary.copy(
@@ -238,8 +252,10 @@ fun ZoneCard(
 
         modifier = Modifier
             .fillMaxWidth()
-            .height(140.dp)
-            .clip(RoundedCornerShape(20.dp))
+            .height(130.dp)
+            .clip(
+                RoundedCornerShape(22.dp)
+            )
             .background(backgroundColor)
             .border(
 
@@ -247,7 +263,8 @@ fun ZoneCard(
 
                 color = borderColor,
 
-                shape = RoundedCornerShape(20.dp)
+                shape =
+                    RoundedCornerShape(22.dp)
             )
 
             .clickable(
@@ -256,7 +273,8 @@ fun ZoneCard(
 
             .padding(18.dp),
 
-        contentAlignment = Alignment.Center
+        contentAlignment =
+            Alignment.Center
     ) {
 
         Column(
@@ -265,19 +283,26 @@ fun ZoneCard(
                 Alignment.CenterHorizontally,
 
             verticalArrangement =
-                Arrangement.spacedBy(10.dp)
+                Arrangement.spacedBy(12.dp)
         ) {
 
             Icon(
 
                 imageVector =
-                    Icons.Default.LocationOn,
+
+                    if (name == "ALL")
+                        Icons.Default.Search
+
+                    else
+                        Icons.Default.LocationOn,
 
                 contentDescription = null,
 
-                modifier = Modifier.size(32.dp),
+                modifier =
+                    Modifier.size(34.dp),
 
                 tint =
+
                     if (isSelected)
 
                         MaterialTheme.colorScheme.primary
@@ -290,9 +315,11 @@ fun ZoneCard(
 
                 text = name,
 
-                textAlign = TextAlign.Center,
+                textAlign =
+                    TextAlign.Center,
 
                 fontWeight =
+
                     if (isSelected)
 
                         FontWeight.Bold
@@ -304,6 +331,7 @@ fun ZoneCard(
                     MaterialTheme.typography.bodyLarge,
 
                 color =
+
                     if (isSelected)
 
                         MaterialTheme.colorScheme.primary

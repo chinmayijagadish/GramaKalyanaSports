@@ -24,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -39,7 +40,9 @@ import com.gramakalyana.sports.ui.components.GlassmorphismCard
 import com.gramakalyana.sports.ui.components.LiveBadge
 import com.gramakalyana.sports.utils.SelectedZone
 import com.gramakalyana.sports.viewmodel.CricketLiveViewModel
+import com.gramakalyana.sports.viewmodel.KabaddiLiveViewModel
 import com.gramakalyana.sports.viewmodel.MatchViewModel
+import com.gramakalyana.sports.viewmodel.VolleyballLiveViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,36 +54,68 @@ fun LiveMatchesScreen(
             MatchViewModel =
         viewModel()
 
-    val cricketViewModel:
-            CricketLiveViewModel =
-        viewModel()
-
     val allMatches by
     matchViewModel.matches.collectAsState()
-
-    val liveData by
-    cricketViewModel.liveMatch.collectAsState()
 
     val selectedZone =
         SelectedZone.selectedZone
 
-    val zoneMatches =
-        remember(allMatches) {
+    val selectedSport =
+        SelectedZone.selectedSport
 
-            allMatches.filter {
+    val filteredMatches =
+        remember(
+            allMatches,
+            selectedZone,
+            selectedSport
+        ) {
 
-                it.zone
-                    .trim()
-                    .lowercase() ==
+            allMatches.filter { match ->
 
-                        selectedZone
+                val zoneMatches =
+
+                    if (
+                        selectedZone == "ALL"
+                    ) {
+                        true
+                    }
+
+                    else {
+
+                        match.zone
                             .trim()
-                            .lowercase()
+                            .lowercase() ==
+
+                                selectedZone
+                                    .trim()
+                                    .lowercase()
+                    }
+
+                val sportMatches =
+
+                    if (
+                        selectedSport == "ALL"
+                    ) {
+                        true
+                    }
+
+                    else {
+
+                        match.sportType
+                            .trim()
+                            .lowercase() ==
+
+                                selectedSport
+                                    .trim()
+                                    .lowercase()
+                    }
+
+                zoneMatches && sportMatches
             }
         }
 
     val liveMatches =
-        zoneMatches.filter {
+        filteredMatches.filter {
 
             it.status
                 .trim()
@@ -88,7 +123,7 @@ fun LiveMatchesScreen(
         }
 
     val upcomingMatches =
-        zoneMatches.filter {
+        filteredMatches.filter {
 
             it.status
                 .trim()
@@ -96,7 +131,7 @@ fun LiveMatchesScreen(
         }
 
     val completedMatches =
-        zoneMatches.filter {
+        filteredMatches.filter {
 
             it.status
                 .trim()
@@ -114,7 +149,19 @@ fun LiveMatchesScreen(
                     Text(
 
                         text =
-                            "$selectedZone Matches",
+
+                            if (
+                                selectedSport == "ALL"
+                            ) {
+
+                                "$selectedZone Matches"
+
+                            }
+
+                            else {
+
+                                "$selectedSport • $selectedZone"
+                            },
 
                         fontWeight =
                             FontWeight.Bold
@@ -168,7 +215,7 @@ fun LiveMatchesScreen(
             }
         }
 
-        else if (zoneMatches.isEmpty()) {
+        else if (filteredMatches.isEmpty()) {
 
             Box(
                 modifier = Modifier
@@ -202,8 +249,6 @@ fun LiveMatchesScreen(
                     Arrangement.spacedBy(22.dp)
             ) {
 
-                // LIVE
-
                 item {
 
                     MatchSectionTitle(
@@ -222,53 +267,12 @@ fun LiveMatchesScreen(
 
                     items(liveMatches) { match ->
 
-                        RealtimeMatchCard(
-
+                        LiveMatchCard(
                             match = match,
-
-                            liveScore =
-
-                                if (
-                                    liveData.matchId ==
-                                    match.matchId
-                                ) {
-
-                                    "${liveData.runs}/${liveData.wickets} (${liveData.overs})"
-
-                                } else {
-
-                                    ""
-                                },
-
-                            resultText =
-
-                                if (
-                                    liveData.matchId ==
-                                    match.matchId
-                                ) {
-
-                                    liveData.resultText
-
-                                } else {
-
-                                    ""
-                                },
-
-                            onClick = {
-
-                                navController.navigate(
-
-                                    Screen.MatchDetails
-                                        .createRoute(
-                                            match.matchId
-                                        )
-                                )
-                            }
+                            navController = navController
                         )
                     }
                 }
-
-                // UPCOMING
 
                 item {
 
@@ -310,8 +314,6 @@ fun LiveMatchesScreen(
                     }
                 }
 
-                // COMPLETED
-
                 item {
 
                     MatchSectionTitle(
@@ -336,7 +338,7 @@ fun LiveMatchesScreen(
 
                             liveScore = "",
 
-                            resultText = "",
+                            resultText = match.winner,
 
                             onClick = {
 
@@ -362,6 +364,165 @@ fun LiveMatchesScreen(
             }
         }
     }
+}
+
+@Composable
+fun LiveMatchCard(
+
+    match: Match,
+
+    navController: NavController
+) {
+
+    val cricketViewModel:
+            CricketLiveViewModel =
+        viewModel()
+
+    val kabaddiViewModel:
+            KabaddiLiveViewModel =
+        viewModel()
+
+    val volleyballViewModel:
+            VolleyballLiveViewModel =
+        viewModel()
+
+    val cricketLive by
+    cricketViewModel.liveMatch.collectAsState()
+
+    val kabaddiLive by
+    kabaddiViewModel.liveMatch.collectAsState()
+
+    val volleyballLive by
+    volleyballViewModel.liveMatch.collectAsState()
+
+    LaunchedEffect(match.matchId) {
+
+        when (match.sportType) {
+
+            "Cricket" -> {
+
+                cricketViewModel.observeLiveMatch(
+                    match.matchId
+                )
+            }
+
+            "Kabaddi" -> {
+
+                kabaddiViewModel.observeLiveMatch(
+                    match.matchId
+                )
+            }
+
+            else -> {
+
+                volleyballViewModel.observeLiveMatch(
+                    match.matchId
+                )
+            }
+        }
+    }
+
+    val liveScore =
+
+        when (match.sportType) {
+
+            "Cricket" -> {
+
+                if (
+                    cricketLive.matchId ==
+                    match.matchId
+                ) {
+
+                    "${cricketLive.runs}/${cricketLive.wickets} (${cricketLive.overs})"
+
+                } else ""
+            }
+
+            "Kabaddi" -> {
+
+                if (
+                    kabaddiLive.matchId ==
+                    match.matchId
+                ) {
+
+                    "${kabaddiLive.teamAScore} - ${kabaddiLive.teamBScore} | Half ${kabaddiLive.currentHalf}"
+
+                } else ""
+            }
+
+            else -> {
+
+                if (
+                    volleyballLive.matchId ==
+                    match.matchId
+                ) {
+
+                    "${volleyballLive.teamAPoints} - ${volleyballLive.teamBPoints} | Sets ${volleyballLive.teamASets}-${volleyballLive.teamBSets}"
+
+                } else ""
+            }
+        }
+
+    val resultText =
+
+        when (match.sportType) {
+
+            "Cricket" -> {
+
+                if (
+                    cricketLive.matchId ==
+                    match.matchId
+                ) {
+
+                    cricketLive.resultText
+
+                } else ""
+            }
+
+            "Kabaddi" -> {
+
+                if (
+                    kabaddiLive.matchId ==
+                    match.matchId
+                ) {
+
+                    kabaddiLive.resultText
+
+                } else ""
+            }
+
+            else -> {
+
+                if (
+                    volleyballLive.matchId ==
+                    match.matchId
+                ) {
+
+                    volleyballLive.resultText
+
+                } else ""
+            }
+        }
+
+    RealtimeMatchCard(
+
+        match = match,
+
+        liveScore = liveScore,
+
+        resultText = resultText,
+
+        onClick = {
+
+            navController.navigate(
+
+                Screen.MatchDetails
+                    .createRoute(
+                        match.matchId
+                    )
+            )
+        }
+    )
 }
 
 @Composable
@@ -424,7 +585,7 @@ fun RealtimeMatchCard(
                 Modifier.padding(18.dp),
 
             verticalArrangement =
-                Arrangement.spacedBy(12.dp)
+                Arrangement.spacedBy(10.dp)
         ) {
 
             Row(
@@ -434,8 +595,17 @@ fun RealtimeMatchCard(
 
                 Text(
 
-                    text =
-                        "${match.sportType} Match",
+                    text = when (match.sportType) {
+
+                        "Cricket" ->
+                            "🏏 Cricket Match"
+
+                        "Kabaddi" ->
+                            "🤼 Kabaddi Match"
+
+                        else ->
+                            "🏐 Volleyball Match"
+                    },
 
                     color =
                         MaterialTheme.colorScheme.primary,
@@ -450,9 +620,7 @@ fun RealtimeMatchCard(
                 )
 
                 if (
-                    match.status
-                        .trim()
-                        .uppercase() == "LIVE"
+                    match.status == "LIVE"
                 ) {
 
                     LiveBadge()

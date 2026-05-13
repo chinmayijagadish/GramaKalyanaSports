@@ -74,26 +74,67 @@ fun AddPlayerScreen(
     val allPlayers by
     playerViewModel.players.collectAsState()
 
+    val currentPlayers =
+
+        allPlayers.filter {
+
+            it.teamId == teamId
+        }
+
+    val maxPlayers =
+
+        when (sportType) {
+
+            "Cricket" -> 11
+
+            "Kabaddi" -> 7
+
+            else -> 6
+        }
+
     val roles = when (sportType) {
 
         "Cricket" -> listOf(
+
             "Batsman",
+
+            "Batter",
+
             "Bowler",
-            "All Rounder",
-            "Wicket Keeper"
+
+            "Fast Bowler",
+
+            "Spinner",
+
+            "Wicket Keeper",
+
+            "All Rounder"
         )
 
         "Kabaddi" -> listOf(
+
             "Raider",
+
             "Defender",
+
+            "Corner Defender",
+
+            "Cover Defender",
+
             "All Rounder"
         )
 
         else -> listOf(
+
             "Setter",
-            "Spiker",
-            "Libero",
-            "Blocker"
+
+            "Outside Hitter",
+
+            "Opposite Hitter",
+
+            "Middle Blocker",
+
+            "Libero"
         )
     }
 
@@ -106,17 +147,21 @@ fun AddPlayerScreen(
                 title = {
 
                     Text(
-                        text = "Add Player",
 
-                        fontWeight = FontWeight.Bold
+                        text =
+                            "Add Player",
+
+                        fontWeight =
+                            FontWeight.Bold
                     )
                 },
 
-                colors = TopAppBarDefaults.topAppBarColors(
+                colors =
+                    TopAppBarDefaults.topAppBarColors(
 
-                    containerColor =
-                        MaterialTheme.colorScheme.background
-                )
+                        containerColor =
+                            MaterialTheme.colorScheme.background
+                    )
             )
         }
 
@@ -133,6 +178,23 @@ fun AddPlayerScreen(
         ) {
 
             item {
+
+                Text(
+
+                    text =
+                        "Players: ${currentPlayers.size}/$maxPlayers",
+
+                    style =
+                        MaterialTheme.typography.titleMedium,
+
+                    fontWeight =
+                        FontWeight.Bold
+                )
+
+                Spacer(
+                    modifier =
+                        Modifier.height(12.dp)
+                )
 
                 OutlinedTextField(
                     value = playerName,
@@ -161,7 +223,11 @@ fun AddPlayerScreen(
                     value = jerseyNumber,
 
                     onValueChange = {
-                        jerseyNumber = it
+
+                        jerseyNumber =
+                            it.filter { char ->
+                                char.isDigit()
+                            }
                     },
 
                     label = {
@@ -258,9 +324,64 @@ fun AddPlayerScreen(
                         ) {
 
                             Toast.makeText(
+
                                 navController.context,
 
                                 "Fill all fields",
+
+                                Toast.LENGTH_SHORT
+                            ).show()
+
+                            return@Button
+                        }
+
+                        if (
+                            currentPlayers.size >= maxPlayers
+                        ) {
+
+                            Toast.makeText(
+
+                                navController.context,
+
+                                "Maximum players reached for $sportType",
+
+                                Toast.LENGTH_LONG
+                            ).show()
+
+                            return@Button
+                        }
+
+                        val jersey =
+                            jerseyNumber.toIntOrNull()
+
+                        if (jersey == null) {
+
+                            Toast.makeText(
+
+                                navController.context,
+
+                                "Invalid jersey number",
+
+                                Toast.LENGTH_SHORT
+                            ).show()
+
+                            return@Button
+                        }
+
+                        val duplicateJersey =
+
+                            currentPlayers.any {
+
+                                it.jerseyNumber == jersey
+                            }
+
+                        if (duplicateJersey) {
+
+                            Toast.makeText(
+
+                                navController.context,
+
+                                "Jersey already exists",
 
                                 Toast.LENGTH_SHORT
                             ).show()
@@ -277,7 +398,7 @@ fun AddPlayerScreen(
                                 playerName,
 
                             jerseyNumber =
-                                jerseyNumber.toInt(),
+                                jersey,
 
                             role =
                                 selectedRole,
@@ -295,13 +416,6 @@ fun AddPlayerScreen(
                         playerViewModel
                             .createPlayer(player)
 
-                        val currentPlayers =
-
-                            allPlayers.filter {
-
-                                it.teamId == teamId
-                            }
-
                         teamViewModel.updatePlayerCount(
 
                             teamId,
@@ -310,6 +424,7 @@ fun AddPlayerScreen(
                         )
 
                         Toast.makeText(
+
                             navController.context,
 
                             "Player Added",

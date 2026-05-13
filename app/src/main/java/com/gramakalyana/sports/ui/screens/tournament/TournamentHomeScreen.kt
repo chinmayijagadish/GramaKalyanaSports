@@ -3,19 +3,28 @@ package com.gramakalyana.sports.ui.screens.tournament
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -29,7 +38,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -45,7 +56,8 @@ fun TournamentHomeScreen(
 ) {
 
     val tournamentViewModel:
-            TournamentViewModel = viewModel()
+            TournamentViewModel =
+        viewModel()
 
     val tournaments by
     tournamentViewModel.tournaments.collectAsState()
@@ -75,23 +87,58 @@ fun TournamentHomeScreen(
                 title = {
 
                     Text(
-                        text = "Tournament Home",
 
-                        fontWeight = FontWeight.Bold
+                        text =
+                            "Tournaments",
+
+                        fontWeight =
+                            FontWeight.Bold
                     )
                 },
 
-                colors = TopAppBarDefaults.topAppBarColors(
+                colors =
+                    TopAppBarDefaults.topAppBarColors(
 
-                    containerColor =
-                        MaterialTheme.colorScheme.background
-                )
+                        containerColor =
+                            MaterialTheme.colorScheme.background
+                    )
             )
+        },
+
+        floatingActionButton = {
+
+            FloatingActionButton(
+
+                onClick = {
+
+                    navController.navigate(
+                        Screen.TournamentSetup.route
+                    )
+                },
+
+                containerColor =
+                    MaterialTheme.colorScheme.primary
+            ) {
+
+                Icon(
+
+                    imageVector =
+                        Icons.Default.Edit,
+
+                    contentDescription =
+                        "Create Tournament",
+
+                    tint = Color.White
+                )
+            }
         }
 
     ) { paddingValues ->
 
-        if (showDeleteDialog && selectedTournament != null) {
+        if (
+            showDeleteDialog &&
+            selectedTournament != null
+        ) {
 
             AlertDialog(
 
@@ -102,13 +149,17 @@ fun TournamentHomeScreen(
 
                 title = {
 
-                    Text("Delete Tournament")
+                    Text(
+                        text =
+                            "Delete Tournament"
+                    )
                 },
 
                 text = {
 
                     Text(
-                        "Are you sure you want to delete this tournament?"
+                        text =
+                            "Are you sure you want to delete this tournament?"
                     )
                 },
 
@@ -149,7 +200,10 @@ fun TournamentHomeScreen(
             )
         }
 
-        if (showEditDialog && selectedTournament != null) {
+        if (
+            showEditDialog &&
+            selectedTournament != null
+        ) {
 
             AlertDialog(
 
@@ -160,20 +214,31 @@ fun TournamentHomeScreen(
 
                 title = {
 
-                    Text("Edit Tournament")
+                    Text(
+                        text =
+                            "Edit Tournament"
+                    )
                 },
 
                 text = {
 
                     OutlinedTextField(
-                        value = editedTournamentName,
+
+                        value =
+                            editedTournamentName,
 
                         onValueChange = {
-                            editedTournamentName = it
+
+                            editedTournamentName =
+                                it
                         },
 
                         label = {
-                            Text("Tournament Name")
+
+                            Text(
+                                text =
+                                    "Tournament Name"
+                            )
                         }
                     )
                 },
@@ -222,6 +287,7 @@ fun TournamentHomeScreen(
         }
 
         LazyColumn(
+
             modifier = Modifier
                 .fillMaxSize()
                 .background(
@@ -236,35 +302,49 @@ fun TournamentHomeScreen(
 
             item {
 
-                Button(
-
-                    onClick = {
-
-                        navController.navigate(
-                            Screen.TournamentSetup.route
-                        )
-                    },
-
-                    modifier = Modifier.fillMaxWidth(),
-
-                    shape = RoundedCornerShape(14.dp)
-                ) {
-
-                    Text(
-                        text = "CREATE NEW TOURNAMENT"
-                    )
-                }
-            }
-
-            item {
-
                 Text(
-                    text = "Existing Tournaments",
+
+                    text =
+                        "Manage Sports Tournaments",
 
                     style =
-                        MaterialTheme.typography.titleLarge,
+                        MaterialTheme.typography.headlineSmall,
 
-                    fontWeight = FontWeight.Bold
+                    fontWeight =
+                        FontWeight.ExtraBold
+                )
+
+                Spacer(
+                    modifier =
+                        Modifier.height(6.dp)
+                )
+
+                Text(
+
+                    text =
+                        "Create, manage and monitor tournaments.",
+
+                    color =
+                        MaterialTheme.colorScheme.onSurface.copy(
+                            alpha = 0.7f
+                        )
+                )
+
+                Spacer(
+                    modifier =
+                        Modifier.height(10.dp)
+                )
+
+                Text(
+
+                    text =
+                        "Total Tournaments: ${tournaments.size}",
+
+                    fontWeight =
+                        FontWeight.Bold,
+
+                    color =
+                        MaterialTheme.colorScheme.primary
                 )
             }
 
@@ -272,58 +352,166 @@ fun TournamentHomeScreen(
 
                 item {
 
-                    Text(
-                        text =
-                            "Loading tournaments..."
-                    )
+                    Card(
+
+                        modifier =
+                            Modifier.fillMaxWidth(),
+
+                        shape =
+                            RoundedCornerShape(20.dp),
+
+                        colors =
+                            CardDefaults.cardColors(
+
+                                containerColor =
+                                    MaterialTheme.colorScheme.surfaceVariant
+                            )
+                    ) {
+
+                        Column(
+                            modifier =
+                                Modifier.padding(22.dp)
+                        ) {
+
+                            Text(
+                                text =
+                                    "No tournaments created yet."
+                            )
+                        }
+                    }
                 }
             }
 
             items(tournaments) { tournament ->
 
                 Card(
-                    modifier = Modifier.fillMaxWidth(),
 
-                    shape = RoundedCornerShape(18.dp),
+                    modifier =
+                        Modifier.fillMaxWidth(),
 
-                    colors = CardDefaults.cardColors(
-                        containerColor =
-                            MaterialTheme.colorScheme.primaryContainer
-                    )
+                    shape =
+                        RoundedCornerShape(22.dp),
+
+                    colors =
+                        CardDefaults.cardColors(
+
+                            containerColor =
+                                MaterialTheme.colorScheme.primaryContainer
+                        )
                 ) {
 
                     Column(
-                        modifier = Modifier.padding(18.dp)
+                        modifier =
+                            Modifier.padding(20.dp)
                     ) {
 
-                        Text(
-                            text =
-                                tournament.tournamentName,
+                        Row(
 
-                            style =
-                                MaterialTheme.typography.titleLarge,
+                            modifier =
+                                Modifier.fillMaxWidth(),
 
-                            fontWeight = FontWeight.Bold
-                        )
+                            horizontalArrangement =
+                                Arrangement.SpaceBetween,
+
+                            verticalAlignment =
+                                Alignment.CenterVertically
+                        ) {
+
+                            Column(
+                                modifier =
+                                    Modifier.weight(1f)
+                            ) {
+
+                                Text(
+
+                                    text =
+                                        tournament.tournamentName,
+
+                                    style =
+                                        MaterialTheme.typography.titleLarge,
+
+                                    fontWeight =
+                                        FontWeight.ExtraBold
+                                )
+
+                                Spacer(
+                                    modifier =
+                                        Modifier.height(8.dp)
+                                )
+
+                                Text(
+
+                                    text = when (tournament.sportType) {
+
+                                        "Cricket" ->
+                                            "🏏 Cricket"
+
+                                        "Kabaddi" ->
+                                            "🤼 Kabaddi"
+
+                                        else ->
+                                            "🏐 Volleyball"
+                                    }
+                                )
+
+                                Text(
+                                    text =
+                                        "📍 ${tournament.zone}"
+                                )
+                            }
+
+                            Row {
+
+                                IconButton(
+
+                                    onClick = {
+
+                                        selectedTournament =
+                                            tournament
+
+                                        editedTournamentName =
+                                            tournament.tournamentName
+
+                                        showEditDialog = true
+                                    }
+                                ) {
+
+                                    Icon(
+
+                                        imageVector =
+                                            Icons.Default.Edit,
+
+                                        contentDescription =
+                                            "Edit"
+                                    )
+                                }
+
+                                IconButton(
+
+                                    onClick = {
+
+                                        selectedTournament =
+                                            tournament
+
+                                        showDeleteDialog = true
+                                    }
+                                ) {
+
+                                    Icon(
+
+                                        imageVector =
+                                            Icons.Default.Delete,
+
+                                        contentDescription =
+                                            "Delete"
+                                    )
+                                }
+                            }
+                        }
 
                         Spacer(
                             modifier =
-                                Modifier.height(8.dp)
-                        )
-
-                        Text(
-                            text =
-                                "Sport: ${tournament.sportType}"
-                        )
-
-                        Text(
-                            text =
-                                "Zone: ${tournament.zone}"
-                        )
-
-                        Spacer(
-                            modifier =
-                                Modifier.height(12.dp)
+                                Modifier.height(18.dp)
                         )
 
                         Button(
@@ -346,72 +534,41 @@ fun TournamentHomeScreen(
                                 )
                             },
 
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-
-                            Text(
-                                text = "OPEN TOURNAMENT"
-                            )
-                        }
-
-                        Spacer(
-                            modifier =
-                                Modifier.height(10.dp)
-                        )
-
-                        Button(
-
-                            onClick = {
-
-                                selectedTournament =
-                                    tournament
-
-                                editedTournamentName =
-                                    tournament.tournamentName
-
-                                showEditDialog = true
-                            },
-
                             modifier =
                                 Modifier.fillMaxWidth(),
 
                             shape =
-                                RoundedCornerShape(12.dp)
+                                RoundedCornerShape(14.dp)
                         ) {
 
-                            Text(
-                                text = "EDIT TOURNAMENT"
+                            Icon(
+
+                                imageVector =
+                                    Icons.Default.ArrowForward,
+
+                                contentDescription = null
                             )
-                        }
 
-                        Spacer(
-                            modifier =
-                                Modifier.height(10.dp)
-                        )
-
-                        Button(
-
-                            onClick = {
-
-                                selectedTournament =
-                                    tournament
-
-                                showDeleteDialog = true
-                            },
-
-                            modifier =
-                                Modifier.fillMaxWidth(),
-
-                            shape =
-                                RoundedCornerShape(12.dp)
-                        ) {
+                            Spacer(
+                                modifier =
+                                    Modifier.width(8.dp)
+                            )
 
                             Text(
-                                text = "DELETE TOURNAMENT"
+                                text =
+                                    "OPEN TOURNAMENT"
                             )
                         }
                     }
                 }
+            }
+
+            item {
+
+                Spacer(
+                    modifier =
+                        Modifier.height(90.dp)
+                )
             }
         }
     }
