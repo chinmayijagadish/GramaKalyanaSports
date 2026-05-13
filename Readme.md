@@ -349,6 +349,17 @@ Developed as part of internship work at:
 - Match Result Screens
 
 ---
+## Testing
+
+Basic unit testing was implemented using JUnit to validate scoring and winner logic for:
+
+- Cricket
+- Kabaddi
+- Volleyball
+
+Test cases verify score comparison and winner determination functionality.
+
+---
 
 # ⚡ Installation & Setup
 
