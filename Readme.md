@@ -147,12 +147,6 @@ Separate filtering for:
 
 ## 📊 Match Statistics
 
-<img src="https://github.com/user-attachments/assets/5f04fd41-20d6-4713-ac04-559e6f999a3e" width="250"/>
-
----
-
-## 🗺️ Zone Selection
-
 <img src="https://github.com/user-attachments/assets/28fa2bd9-a501-42e6-a728-be28041270ff" width="250"/>
 
 ---
