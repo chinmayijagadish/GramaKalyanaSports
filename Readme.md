@@ -145,7 +145,7 @@ Separate filtering for:
 
 ---
 
-## 📊 Match Statistics
+## Live Scorecard
 
 <img src="https://github.com/user-attachments/assets/28fa2bd9-a501-42e6-a728-be28041270ff" width="250"/>
 
