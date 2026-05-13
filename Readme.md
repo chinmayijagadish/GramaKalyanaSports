@@ -133,13 +133,13 @@ Separate filtering for:
 
 ---
 
-## 🏏 Cricket Live Scoring
+## 🏏 Scorer Login
 
 <img src="https://github.com/user-attachments/assets/90911146-9446-4cbd-8ad3-af2cec6ce1e0" width="250"/>
 
 ---
 
-## 🤼 Kabaddi Live Scoring
+## 🤼 Tournament Dashboard
 
 <img src="https://github.com/user-attachments/assets/15357a5f-f537-4f10-b7e9-9595fb85f4d2" width="250"/>
 
